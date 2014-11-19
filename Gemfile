@@ -41,3 +41,7 @@ gem 'spring',        group: :development
 
 gem 'activerecord-postgis-adapter'
 gem 'pg'
+
+group :production do
+  gem 'puma'
+end
