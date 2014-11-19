@@ -1,0 +1,57 @@
+<div class="row placeholders">
+  <div id="wildlife-map-canvas"></div>
+</div>
+
+<div class="row">
+  <div class="">
+    <h2><%= @tree.common_name %></h2>
+
+    <%= @tree.geodata %>
+    <%#
+    TODO: Show the coordinates of where the trees are located.
+    TODO: Show various information about the trees.
+      %>
+  </div>
+</div>
+
+<% content_for :head do %>
+  <script>
+   var map;
+
+   function initialize() {
+     var mapOptions = {
+       zoom: 5,
+       center: new google.maps.LatLng(32.6061848572328, -109.868979255016),
+       mapTypeId: google.maps.MapTypeId.TERRAIN
+     };
+
+     var bermudaTriangle;
+
+     map = new google.maps.Map(document.getElementById('wildlife-map-canvas'), mapOptions);
+
+     <% @tree.geodata.each_with_index do |gd, index| %>
+     // Define the LatLng coordinates for the polygon's path.
+     var triangleCoords<%= index -%> = []
+     <% gd.each do |gd| %>
+     triangleCoords<%= index -%>.push(new google.maps.LatLng(<%= gd[1] -%>, <%= gd[0] -%>));
+     <% end %>
+
+     // Construct the polygon.
+     bermudaTriangle<%= index -%> = new google.maps.Polygon({
+       paths: triangleCoords<%= index -%>,
+       strokeColor: '#FF0000',
+       strokeOpacity: 0.8,
+       strokeWeight: 5,
+       fillColor: '#FF0000',
+       fillOpacity: 0.35
+     });
+
+     bermudaTriangle<%= index -%>.setMap(map);
+     <% end %>
+   }
+
+   $(function() {
+     google.maps.event.addDomListener(window, 'load', initialize);
+   });
+  </script>
+<% end %>
