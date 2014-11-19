@@ -6,9 +6,7 @@
   <div class="">
     <h2><%= @tree.common_name %></h2>
 
-    <%= @tree.geodata %>
     <%#
-    TODO: Show the coordinates of where the trees are located.
     TODO: Show various information about the trees.
       %>
   </div>
@@ -50,8 +48,6 @@
      <% end %>
    }
 
-   $(function() {
-     google.maps.event.addDomListener(window, 'load', initialize);
-   });
+   google.maps.event.addDomListener(window, 'load', initialize);
   </script>
 <% end %>
