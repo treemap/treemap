@@ -27,5 +27,5 @@ WORKDIR /treely
 RUN /bin/bash -l -c "bundle"
 
 ENV RAILS_ENV production
-CMD /bin/bash -l -c "bundle exec ./bin/rake assets:precompile"
+CMD /bin/bash -l -c "RAILS_ENV=production bundle exec rake assets:precompile"
 CMD /bin/bash -l -c "bundle exec puma -e production -p 3000"
