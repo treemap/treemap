@@ -44,5 +44,5 @@ gem 'pg'
 
 group :production do
   gem 'therubyracer'
-  gem 'puma'
+  # gem 'puma'
 end
