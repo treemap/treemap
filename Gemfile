@@ -43,5 +43,6 @@ gem 'activerecord-postgis-adapter'
 gem 'pg'
 
 group :production do
+  gem 'therubyracer'
   gem 'puma'
 end
