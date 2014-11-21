@@ -23,7 +23,7 @@ type Tree struct {
 	GeomData   []string `json:"geom",sql:"-"`
 }
 
-func (t *Tree) Geodata() (coordinateJson []string) {
+func (t *Tree) GetGeodata() {
 	rows, err := db.Table("tree_geoms").Select("ST_AsGeoJSON(ST_CollectionExtract(geom, 3)) as geom2").Where("latin_name = ?", t.LatinName).Rows()
 	if err != nil {
 		log.Println(err)
@@ -32,17 +32,8 @@ func (t *Tree) Geodata() (coordinateJson []string) {
 	for rows.Next() {
 		var geodata string
 		rows.Scan(&geodata)
-		coordinateJson = append(coordinateJson, geodata)
+		t.GeomData = append(t.GeomData, geodata)
 	}
-
-	t.GeomData = coordinateJson
-
-	return coordinateJson
-}
-
-func FindTree(latinName string) (t *Tree) {
-
-	return nil
 }
 
 func renderJson(w http.ResponseWriter, page interface{}) {
@@ -64,9 +55,9 @@ func showTreesHandler(w http.ResponseWriter, r *http.Request) {
 
 	tree := Tree{Id: int64(treeId)}
 	db.First(&tree)
+	tree.GetGeodata()
 
 	renderJson(w, tree)
-
 }
 
 func treesHandler(w http.ResponseWriter, r *http.Request) {
