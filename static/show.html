@@ -1,7 +1,15 @@
 <div ng-controller="ShowTreeCtrl">
     <h1>{{ tree.common_name }}</h1>
-    <h1>{{ tree.latin_name }}</h1>
+    <h2>{{ tree.latin_name }}</h2>
+
 </div>
+
+<table class="table">
+    <tr>
+        <td>Area:</td>
+        <td>{{ tree.area }} sq miles</td>
+    </tr>
+</table>
 
 <div class="row placeholders">
   <div id="map-container"></div>

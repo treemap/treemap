@@ -21,6 +21,7 @@ type Tree struct {
 	CommonName string   `json:"common_name"`
 	LatinName  string   `json:"latin_name"`
 	GeomData   []string `json:"geom",sql:"-"`
+	Area       float64  `json:"area",sql:"-"`
 }
 
 func (t *Tree) GetGeodata() {
@@ -34,6 +35,16 @@ func (t *Tree) GetGeodata() {
 		rows.Scan(&geodata)
 		t.GeomData = append(t.GeomData, geodata)
 	}
+}
+
+func (t *Tree) GetArea() {
+	var a struct {
+		Area float64
+	}
+	db.Table("tree_geoms").Select("SUM(ST_Area(ST_Transform(geom, 900913))) as area").Where("latin_name = ?", t.LatinName).Scan(&a)
+
+	t.Area = a.Area * 0.000189394 * 0.000189394 // Get the miles
+	log.Println("Area:", t.Area)
 }
 
 func renderJson(w http.ResponseWriter, page interface{}) {
@@ -56,6 +67,7 @@ func showTreesHandler(w http.ResponseWriter, r *http.Request) {
 	tree := Tree{Id: int64(treeId)}
 	db.First(&tree)
 	tree.GetGeodata()
+	tree.GetArea()
 
 	renderJson(w, tree)
 }
