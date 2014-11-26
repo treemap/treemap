@@ -104,4 +104,24 @@ body {
     border-radius: 50%;
 }
 
-#map-container { height: 500px; }
+#map-container {
+    height: 500px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+
+#loading-bar .bar {
+  background: #00FF00;
+}
+#loading-bar-spinner .spinner-icon {
+  border-top-color:  #00FF00;
+  border-left-color: #00FF00;
+}
+#loading-bar .peg {
+  -moz-box-shadow: #00FF00 1px 0 6px 1px;
+  -ms-box-shadow: #00FF00 1px 0 6px 1px;
+  -webkit-box-shadow: #00FF00 1px 0 6px 1px;
+  box-shadow: #00FF00 1px 0 6px 1px;
+}
