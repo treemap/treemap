@@ -84,12 +84,15 @@ func treesHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func init() {
-	treelyDatabaseUrl := os.Getenv("TREELY_DATABASE_URL")
+	databaseUrl := os.Getenv("TREELY_DATABASE_URL")
+	if databaseUrl == "" {
+		databaseUrl = "user=ayerra dbname=treely_development sslmode=disable"
+	}
 
-	log.Println("Database:", treelyDatabaseUrl)
+	log.Println("Database:", databaseUrl)
 
 	var err error
-	db, err = gorm.Open("postgres", treelyDatabaseUrl)
+	db, err = gorm.Open("postgres", databaseUrl)
 	if err != nil {
 		log.Println(err)
 	}
