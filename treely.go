@@ -47,6 +47,24 @@ func (t *Tree) GetArea() {
 	log.Println("Area:", t.Area)
 }
 
+type NationalPark struct {
+	ParkType string   `json:"park_type"`
+	GeomData []string `json:"geom",sql:"-"`
+}
+
+func (t *NationalPark) GetGeodata() {
+	rows, err := db.Table("national_park").Select("ST_AsGeoJSON(ST_CollectionExtract(geom, 3)) as geom2").Rows()
+	if err != nil {
+		log.Println(err)
+	}
+
+	for rows.Next() {
+		var geodata string
+		rows.Scan(&geodata)
+		t.GeomData = append(t.GeomData, geodata)
+	}
+}
+
 func renderJson(w http.ResponseWriter, page interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -83,6 +101,15 @@ func treesHandler(w http.ResponseWriter, r *http.Request) {
 	renderJson(w, trees)
 }
 
+func parksHandler(w http.ResponseWriter, r *http.Request) {
+	park := NationalPark{
+		ParkType: "national",
+	}
+	park.GetGeodata()
+
+	renderJson(w, park)
+}
+
 func init() {
 	databaseUrl := os.Getenv("TREELY_DATABASE_URL")
 	if databaseUrl == "" {
@@ -103,6 +130,7 @@ func main() {
 	// r.HandleFunc("/", HomeHandler)
 	r.HandleFunc("/trees/{treeId}", showTreesHandler)
 	r.HandleFunc("/trees", treesHandler)
+	r.HandleFunc("/parks", parksHandler)
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 
 	http.Handle("/", r)
