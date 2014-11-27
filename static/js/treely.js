@@ -101,11 +101,11 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
                 cfpLoadingBar.start();
                 $scope.parks = data;
 
-                for(var i = 0; i < $scope.parks.geom.length; i++) {
+                for(var i = 0; i < $scope.parks.length; i++) {
                     cfpLoadingBar.inc();
 
                     console.log(i);
-                    plotPolygon($scope.map, JSON.parse($scope.parks.geom[i]));
+                    plotPolygon($scope.map, JSON.parse($scope.parks[i].geom));
                 }
                 cfpLoadingBar.complete()
 

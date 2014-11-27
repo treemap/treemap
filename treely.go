@@ -48,21 +48,8 @@ func (t *Tree) GetArea() {
 }
 
 type NationalPark struct {
-	ParkType string   `json:"park_type"`
-	GeomData []string `json:"geom",sql:"-"`
-}
-
-func (t *NationalPark) GetGeodata() {
-	rows, err := db.Table("national_park").Select("ST_AsGeoJSON(ST_CollectionExtract(geom, 3)) as geom2").Rows()
-	if err != nil {
-		log.Println(err)
-	}
-
-	for rows.Next() {
-		var geodata string
-		rows.Scan(&geodata)
-		t.GeomData = append(t.GeomData, geodata)
-	}
+	UnitName string `json:"name"`
+	GeomData string `json:"geom"`
 }
 
 func renderJson(w http.ResponseWriter, page interface{}) {
@@ -102,12 +89,10 @@ func treesHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func parksHandler(w http.ResponseWriter, r *http.Request) {
-	park := NationalPark{
-		ParkType: "national",
-	}
-	park.GetGeodata()
+	var parks []NationalPark
+	db.Model(NationalPark{}).Select("ST_AsGeoJSON(ST_CollectionExtract(geom, 3)) as geom_data, unit_name").Scan(&parks)
 
-	renderJson(w, park)
+	renderJson(w, parks)
 }
 
 func init() {
