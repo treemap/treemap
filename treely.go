@@ -2,18 +2,20 @@ package main
 
 import (
 	"encoding/json"
-	"flag"
 	"fmt"
-	sarpa "github.com/abhiyerra/sarpa/client"
 	"github.com/coreos/go-etcd/etcd"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
 	"log"
 	"net/http"
-	"os"
 	"strconv"
-	"time"
+	//	"time"
+	"os"
+)
+
+const (
+	DatabaseUrlKey = "/treemap/database_url"
 )
 
 var (
@@ -108,41 +110,22 @@ func dbConnect(databaseUrl string) {
 	}
 }
 
-func etcdUpdater(etcdHost string) {
-	go func() {
-		for {
-			etcdClient := etcd.NewClient([]string{etcdHost})
-
-			resp, err := etcdClient.Get("/treely/database_url", false, false)
-			if err != nil {
-				log.Println("Hey there is no database_url in etcd")
-			} else {
-				databaseUrl := resp.Node.Value
-				log.Println("DatabaseURL:", databaseUrl)
-				dbConnect(databaseUrl)
-			}
-
-			sarpa.SarpaUpdater(etcdClient, "treely", "123", 120)
-
-			time.Sleep(time.Second * 118)
-		}
-	}()
-}
-
 func init() {
-	var etcd = flag.String("etcd", "", "Use etcd for configuration.")
-	flag.Parse()
-
-	if *etcd != "" {
-		etcdUpdater(*etcd)
-	} else {
-		databaseUrl := os.Getenv("TREELY_DATABASE_URL")
-		if databaseUrl == "" {
-			databaseUrl = "user=ayerra dbname=treely_development sslmode=disable"
-		}
-
-		dbConnect(databaseUrl)
+	etcdHosts := os.Getenv("ETCD_HOSTS")
+	if etcdHosts == "" {
+		etcdHosts = "http://127.0.0.1:4001"
 	}
+
+	etcdClient := etcd.NewClient([]string{etcdHosts})
+
+	resp, err := etcdClient.Get(DatabaseUrlKey, false, false)
+	if err != nil {
+		panic(err)
+	}
+
+	databaseUrl := resp.Node.Value
+
+	dbConnect(databaseUrl)
 }
 
 func main() {
