@@ -24,7 +24,7 @@ var plotPolygon = function(map, geom) {
             polygon.setMap(map);
         }
     }
-}
+};
 
 
 angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate'])
@@ -55,7 +55,7 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
     .controller('TreesCtrl', function($scope, $http) {
         $scope.trees = [];
 
-        $http.get('/trees').
+        $http.get(SarpaServiceDiscovery.treemap[0] + '/trees').
             success(function(data, status, headers, config) {
                 $scope.trees = data;
             }).
@@ -74,7 +74,7 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
 
         $scope.map = new google.maps.Map(document.getElementById('map-container'), mapOptions);
 
-        $http.get('/trees/' + $routeParams.treeId).
+        $http.get(SarpaServiceDiscovery.treemap[0] + '/trees/' + $routeParams.treeId).
             success(function(data, status, headers, config) {
                 $scope.tree = data;
 
@@ -96,7 +96,7 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
 
         $scope.map = new google.maps.Map(document.getElementById('map-container'), mapOptions);
 
-        $http.get('/parks').
+        $http.get(SarpaServiceDiscovery.treemap[0] + '/parks').
             success(function(data, status, headers, config) {
                 cfpLoadingBar.start();
                 $scope.parks = data;
