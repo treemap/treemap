@@ -1,0 +1,16 @@
+[Unit]
+Description=treemap
+
+[Service]
+EnvironmentFile=/etc/environment
+ExecStartPre=-/usr/bin/docker pull forestly/treely
+ExecStartPre=-/usr/bin/docker kill treemap
+ExecStartPre=-/usr/bin/docker rm treemap
+ExecStartPre=-/usr/bin/etcdctl mkdir /sarpa/treemap
+ExecStart=/usr/bin/docker run --rm --name treemap -p 3001:3001 -e "ETCD_HOSTS=http://172.17.42.1:4001" forestly/treely
+ExecStartPost=/usr/bin/etcdctl set /sarpa/treemap/%m http://${COREOS_PUBLIC_IPV4}:3001
+ExecStop=/usr/bin/docker stop treemap
+ExecStopPost=/usr/bin/etcdctl rm /sarpa/treemap/%m
+
+[X-Fleet]
+Conflicts=treemap@*.service
