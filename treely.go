@@ -1,17 +1,16 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
+	gocache "github.com/abhiyerra/gowebcommons/cache"
+	render "github.com/abhiyerra/gowebcommons/render"
 	"github.com/coreos/go-etcd/etcd"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
 	"log"
 	"net/http"
-	"strconv"
-	//	"time"
 	"os"
+	"strconv"
 )
 
 const (
@@ -20,7 +19,7 @@ const (
 
 var (
 	db    gorm.DB
-	cache Cache
+	cache gocache.Cache
 )
 
 type Tree struct {
@@ -59,19 +58,6 @@ type NationalPark struct {
 	GeomData string `json:"geom"`
 }
 
-func renderJson(w http.ResponseWriter, page interface{}) {
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-
-	b, err := json.Marshal(page)
-	if err != nil {
-		log.Println("error:", err)
-		fmt.Fprintf(w, "")
-	}
-
-	w.Write(b)
-}
-
 func showTreesHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	treeId, _ := strconv.ParseInt(vars["treeId"], 10, 64)
@@ -85,7 +71,7 @@ func showTreesHandler(w http.ResponseWriter, r *http.Request) {
 		return tree
 	})
 
-	renderJson(w, tree)
+	render.RenderJson(w, tree)
 }
 
 func treesHandler(w http.ResponseWriter, r *http.Request) {
@@ -100,7 +86,7 @@ func treesHandler(w http.ResponseWriter, r *http.Request) {
 		return trees
 	})
 
-	renderJson(w, trees)
+	render.RenderJson(w, trees)
 }
 
 func parksHandler(w http.ResponseWriter, r *http.Request) {
@@ -110,7 +96,7 @@ func parksHandler(w http.ResponseWriter, r *http.Request) {
 		return parks
 	})
 
-	renderJson(w, parks)
+	render.RenderJson(w, parks)
 }
 
 func dbConnect(databaseUrl string) {
@@ -138,7 +124,7 @@ func init() {
 	databaseUrl := resp.Node.Value
 	dbConnect(databaseUrl)
 
-	cache = NewCache()
+	cache = gocache.NewCache()
 }
 
 func main() {
