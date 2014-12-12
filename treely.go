@@ -19,7 +19,8 @@ const (
 )
 
 var (
-	db gorm.DB
+	db    gorm.DB
+	cache Cache
 )
 
 type Tree struct {
@@ -75,28 +76,39 @@ func showTreesHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	treeId, _ := strconv.ParseInt(vars["treeId"], 10, 64)
 
-	tree := Tree{Id: int64(treeId)}
-	db.First(&tree)
-	tree.GetGeodata()
-	tree.GetArea()
+	tree := cache.Get("tree/"+vars["treeId"], func() interface{} {
+		tree := Tree{Id: int64(treeId)}
+		db.First(&tree)
+		tree.GetGeodata()
+		tree.GetArea()
+
+		return tree
+	})
 
 	renderJson(w, tree)
 }
 
 func treesHandler(w http.ResponseWriter, r *http.Request) {
-	var trees []Tree
+	trees := cache.Get("trees", func() interface{} {
+		var trees []Tree
 
-	err := db.Model(Tree{}).Select("id, latin_name, common_name").Scan(&trees)
-	if err != nil {
-		log.Println(err)
-	}
+		err := db.Model(Tree{}).Select("id, latin_name, common_name").Scan(&trees)
+		if err != nil {
+			log.Println(err)
+		}
+
+		return trees
+	})
 
 	renderJson(w, trees)
 }
 
 func parksHandler(w http.ResponseWriter, r *http.Request) {
-	var parks []NationalPark
-	db.Model(NationalPark{}).Select("ST_AsGeoJSON(ST_CollectionExtract(geom, 3)) as geom_data, unit_name").Scan(&parks)
+	parks := cache.Get("parks", func() interface{} {
+		var parks []NationalPark
+		db.Model(NationalPark{}).Select("ST_AsGeoJSON(ST_CollectionExtract(geom, 3)) as geom_data, unit_name").Scan(&parks)
+		return parks
+	})
 
 	renderJson(w, parks)
 }
@@ -124,8 +136,9 @@ func init() {
 	}
 
 	databaseUrl := resp.Node.Value
-
 	dbConnect(databaseUrl)
+
+	cache = NewCache()
 }
 
 func main() {
