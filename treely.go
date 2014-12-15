@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	gocache "github.com/abhiyerra/gowebcommons/cache"
 	render "github.com/abhiyerra/gowebcommons/render"
 	"github.com/coreos/go-etcd/etcd"
@@ -74,6 +75,24 @@ func showTreesHandler(w http.ResponseWriter, r *http.Request) {
 	render.RenderJson(w, tree)
 }
 
+func nearbyTreesHandler(w http.ResponseWriter, r *http.Request) {
+	var trees []Tree
+
+	longitude := r.URL.Query().Get("long")
+	latitude := r.URL.Query().Get("lat")
+	log.Println("Long:", longitude, "Lat:", latitude)
+
+	err := db.Model(Tree{}).Select("id, latin_name, common_name").
+		Where(fmt.Sprintf("latin_name in (select distinct(latin_name) From tree_geoms where ST_DWithin(ST_GeomFromText('POINT(%s %s)' , 4326)::geography, geom, 100 , true))", longitude, latitude)).
+		Scan(&trees)
+
+	if err != nil {
+		log.Println(err)
+	}
+
+	render.RenderJson(w, trees)
+}
+
 func treesHandler(w http.ResponseWriter, r *http.Request) {
 	trees := cache.Get("trees", func() interface{} {
 		var trees []Tree
@@ -130,6 +149,7 @@ func init() {
 func main() {
 	r := mux.NewRouter()
 	// r.HandleFunc("/", HomeHandler)
+	r.HandleFunc("/trees/nearby", nearbyTreesHandler)
 	r.HandleFunc("/trees/{treeId}", showTreesHandler)
 	r.HandleFunc("/trees", treesHandler)
 	r.HandleFunc("/parks", parksHandler)

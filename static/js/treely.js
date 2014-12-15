@@ -37,6 +37,10 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
                 controller:'TreesCtrl',
                 templateUrl:'../trees.html'
             })
+            .when('/trees/nearby', {
+                controller:'NearbyTreesCtrl',
+                templateUrl:'../trees.html'
+            })
             .when('/trees/:treeId', {
                 controller:'ShowTreeCtrl',
                 templateUrl:'../show.html'
@@ -63,6 +67,33 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
             });
 
     })
+    .controller('NearbyTreesCtrl', function($scope, $http, cfpLoadingBar) {
+        $scope.trees = [];
+
+
+        cfpLoadingBar.start();
+        navigator.geolocation.getCurrentPosition(function(position) {
+            cfpLoadingBar.complete()
+            $scope.longitude = position.coords.longitude;
+            $scope.latitude = position.coords.latitude;
+
+
+            $http.get(SarpaServiceDiscovery.treemap[0] + '/trees/nearby',
+                      {
+                          params: {
+                              lat: position.coords.latitude,
+                              long: position.coords.longitude
+                          }
+                      }).
+                success(function(data, status, headers, config) {
+                    cfpLoadingBar.inc();
+                    $scope.trees = data;
+                }).
+                error(function(data, status, headers, config) {
+                });
+
+        });
+    })
     .controller('ShowTreeCtrl', function($scope, $http, $routeParams) {
         $scope.tree = {}
 
@@ -79,7 +110,6 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
                 $scope.tree = data;
 
                 for(var i = 0; i < $scope.tree.geom.length; i++) {
-                    console.log(i);
                     plotPolygon($scope.map, JSON.parse($scope.tree.geom[i]));
                 }
             }).
