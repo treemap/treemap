@@ -143,7 +143,7 @@ func init() {
 	databaseUrl := resp.Node.Value
 	dbConnect(databaseUrl)
 
-	cache = gocache.NewCache()
+	cache = gocache.New()
 }
 
 func main() {
