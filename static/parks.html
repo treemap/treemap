@@ -1,7 +1,7 @@
 <div>
-    <h1>U.S. National Parks</h1>
+  <h1>U.S. National Parks</h1>
 
-    {{ parks.progress }}
+  {{ parks.progress }}
 </div>
 
 <div class="row placeholders">
@@ -9,5 +9,5 @@
 </div>
 
 <ul>
-    <li ng-repeat="p in parks">{{ p.name }}</li>
+  <li ng-repeat="p in parks"><a ng-href="http://www.nps.gov/{{ p.code }}/index.htm">{{ p.name }}</a></li>
 </ul>
