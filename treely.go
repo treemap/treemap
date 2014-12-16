@@ -108,6 +108,24 @@ func treesHandler(w http.ResponseWriter, r *http.Request) {
 	render.RenderJson(w, trees)
 }
 
+func nearbyParksHandler(w http.ResponseWriter, r *http.Request) {
+	var parks []NationalPark
+
+	longitude := r.URL.Query().Get("long")
+	latitude := r.URL.Query().Get("lat")
+	log.Println("Long:", longitude, "Lat:", latitude)
+
+	err := db.Model(NationalPark{}).
+		Select("ST_AsGeoJSON(ST_CollectionExtract(geom, 3)) as geom_data, unit_name").
+		Where(fmt.Sprintf("ST_DWithin(ST_GeomFromText('POINT(%s %s)' , 4326)::geography, geom, 160934, true)", longitude, latitude)). // Within 100 miles -> 160934 meters
+		Scan(&parks)
+	if err != nil {
+		log.Println(err)
+	}
+
+	render.RenderJson(w, parks)
+}
+
 func parksHandler(w http.ResponseWriter, r *http.Request) {
 	parks := cache.Get("parks", func() interface{} {
 		var parks []NationalPark
@@ -125,6 +143,7 @@ func dbConnect(databaseUrl string) {
 	if err != nil {
 		log.Println(err)
 	}
+	db.LogMode(true)
 }
 
 func init() {
@@ -152,6 +171,7 @@ func main() {
 	r.HandleFunc("/trees/nearby", nearbyTreesHandler)
 	r.HandleFunc("/trees/{treeId}", showTreesHandler)
 	r.HandleFunc("/trees", treesHandler)
+	r.HandleFunc("/parks/nearby", nearbyParksHandler)
 	r.HandleFunc("/parks", parksHandler)
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 

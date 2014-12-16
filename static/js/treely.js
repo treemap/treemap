@@ -45,6 +45,10 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
                 controller:'ShowTreeCtrl',
                 templateUrl:'../show.html'
             })
+            .when('/parks/nearby', {
+                controller:'NearbyParksCtrl',
+                templateUrl:'../parks.html'
+            })
             .when('/parks', {
                 controller:'ParksCtrl',
                 templateUrl:'../parks.html'
@@ -76,7 +80,6 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
             cfpLoadingBar.complete()
             $scope.longitude = position.coords.longitude;
             $scope.latitude = position.coords.latitude;
-
 
             $http.get(SarpaServiceDiscovery.treemap[0] + '/trees/nearby',
                       {
@@ -114,6 +117,48 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
                 }
             }).
             error(function(data, status, headers, config) {});
+    })
+    .controller('NearbyParksCtrl', function($scope, $http, cfpLoadingBar) {
+        $scope.parks = {}
+
+        var mapOptions = {
+            zoom: 4,
+            center: new google.maps.LatLng(37.09024, -95.712891),
+            mapTypeId: google.maps.MapTypeId.TERRAIN
+        };
+
+        $scope.map = new google.maps.Map(document.getElementById('map-container'), mapOptions);
+
+
+        cfpLoadingBar.start();
+        navigator.geolocation.getCurrentPosition(function(position) {
+            cfpLoadingBar.complete()
+            $scope.longitude = position.coords.longitude;
+            $scope.latitude = position.coords.latitude;
+
+            $http.get(SarpaServiceDiscovery.treemap[0] + '/parks/nearby',
+                      {
+                          params: {
+                              lat: position.coords.latitude,
+                              long: position.coords.longitude
+
+                          }
+                      }).
+                success(function(data, status, headers, config) {
+                    cfpLoadingBar.start();
+                    $scope.parks = data;
+
+                    for(var i = 0; i < $scope.parks.length; i++) {
+                        cfpLoadingBar.inc();
+
+                        console.log(i);
+                        plotPolygon($scope.map, JSON.parse($scope.parks[i].geom));
+                    }
+                    cfpLoadingBar.complete()
+
+                }).
+                error(function(data, status, headers, config) {});
+        });
     })
     .controller('ParksCtrl', function($scope, $http, $routeParams, cfpLoadingBar) {
         $scope.parks = {}
