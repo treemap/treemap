@@ -83,9 +83,9 @@ func nearbyTreesHandler(w http.ResponseWriter, r *http.Request) {
 	latitude := r.URL.Query().Get("lat")
 	log.Println("Long:", longitude, "Lat:", latitude)
 
-	err := db.Model(Tree{}).Select("id, latin_name, common_name").
-		Where(fmt.Sprintf("latin_name in (select distinct(latin_name) From tree_geoms where ST_DWithin(ST_GeomFromText('POINT(%s %s)' , 4326)::geography, geom, 160934 , true))", longitude, latitude)).
-		Scan(&trees)
+	err := db.Model(Tree{}).Select("distinct trees.id, trees.latin_name, trees.common_name").
+		Joins(fmt.Sprintf("INNER JOIN tree_geoms ON tree_geoms.latin_name = trees.latin_name AND ST_DWithin(ST_GeomFromText('POINT(%s %s)' , 4326)::geography, tree_geoms.geom, 160934 , true)", longitude, latitude)).
+		Order("trees.latin_name asc").Scan(&trees)
 
 	if err != nil {
 		log.Println(err)
