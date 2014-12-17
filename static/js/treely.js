@@ -74,7 +74,6 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
     .controller('NearbyTreesCtrl', function($scope, $http, cfpLoadingBar) {
         $scope.trees = [];
 
-
         cfpLoadingBar.start();
         navigator.geolocation.getCurrentPosition(function(position) {
             cfpLoadingBar.complete()
