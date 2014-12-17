@@ -168,12 +168,11 @@ func init() {
 
 func main() {
 	r := mux.NewRouter()
-	r.HandleFunc("/trees/nearby", nearbyTreesHandler)
-	r.HandleFunc("/trees/{treeId}", showTreesHandler)
-	r.HandleFunc("/trees", treesHandler)
-	r.HandleFunc("/parks/nearby", nearbyParksHandler)
-	r.HandleFunc("/parks", parksHandler)
-	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
+	r.HandleFunc("/trees/nearby", nearbyTreesHandler).Methods("GET")
+	r.HandleFunc("/trees/{treeId}", showTreesHandler).Methods("GET")
+	r.HandleFunc("/trees", treesHandler).Methods("GET")
+	r.HandleFunc("/parks/nearby", nearbyParksHandler).Methods("GET")
+	r.HandleFunc("/parks", parksHandler).Methods("GET")
 
 	http.Handle("/", r)
 	http.ListenAndServe(":3001", nil)
