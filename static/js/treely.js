@@ -176,6 +176,8 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
 
                 L.geoJson(JSON.parse($scope.zipcode.geom)).addTo($scope.map);
 
+                var center = JSON.parse($scope.zipcode.center);
+                $scope.map.setView(center.coordinates.reverse(), 10);
             }).
             error(function(data, status, headers, config) {});
     });
