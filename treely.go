@@ -137,6 +137,25 @@ func parksHandler(w http.ResponseWriter, r *http.Request) {
 	render.RenderJson(w, parks)
 }
 
+type Zipcode struct {
+	Number   string `json:"number"`
+	GeomData string `json:"geom"`
+}
+
+func showZipCodeHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	zipcode := vars["zipcode"]
+
+	z := cache.Get("zipcode/"+zipcode, func() interface{} {
+		z := Zipcode{Number: zipcode}
+		db.Select("geoid10 as number, ST_AsGeoJSON(ST_CollectionExtract(geom, 3)) as geom_data").Where("geoid10 = ?", zipcode).First(&z)
+
+		return z
+	})
+
+	render.RenderJson(w, z)
+}
+
 func dbConnect(databaseUrl string) {
 	log.Println("Connecting to database:", databaseUrl)
 	var err error
@@ -173,6 +192,7 @@ func main() {
 	r.HandleFunc("/trees", treesHandler).Methods("GET")
 	r.HandleFunc("/parks/nearby", nearbyParksHandler).Methods("GET")
 	r.HandleFunc("/parks", parksHandler).Methods("GET")
+	r.HandleFunc("/zipcode/{zipcode}", showZipCodeHandler).Methods("GET")
 
 	http.Handle("/", r)
 	http.ListenAndServe(":3001", nil)

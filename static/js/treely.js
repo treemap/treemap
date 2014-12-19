@@ -54,6 +54,10 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
                 controller:'ParksCtrl',
                 templateUrl:'../parks.html'
             })
+            .when('/zipcode/:zipcode', {
+                controller:'ShowZipcodeCtrl',
+                templateUrl:'../templates/zipcode/show.html'
+            })
             .otherwise({
                 redirectTo:'/'
             });
@@ -161,4 +165,17 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
                 }).
                 error(function(data, status, headers, config) {});
         });
+    })
+    .controller('ShowZipcodeCtrl', function($scope, $http, $routeParams) {
+        $scope.zipcode = {}
+        $scope.map = BuildMap('map-container');
+
+        $http.get(SarpaServiceDiscovery.treemap[0] + '/zipcode/' + $routeParams.zipcode).
+            success(function(data, status, headers, config) {
+                $scope.zipcode = data;
+
+                L.geoJson(JSON.parse($scope.zipcode.geom)).addTo($scope.map);
+
+            }).
+            error(function(data, status, headers, config) {});
     });
