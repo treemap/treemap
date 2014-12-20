@@ -110,6 +110,8 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
 
                 AddGeoJsonsToMap($scope.tree.geom, $scope.map);
 
+                var center = JSON.parse($scope.tree.center);
+                $scope.map.setView(center.coordinates.reverse(), 6);
             }).
             error(function(data, status, headers, config) {});
     })

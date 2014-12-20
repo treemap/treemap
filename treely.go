@@ -29,6 +29,7 @@ type Tree struct {
 	LatinName  string   `json:"latin_name"`
 	GeomData   []string `json:"geom",sql:"-"`
 	Area       float64  `json:"area",sql:"-"`
+	Center     string   `json:"center",sql:"-"`
 }
 
 func (t *Tree) GetGeodata() {
@@ -54,10 +55,14 @@ func (t *Tree) GetArea() {
 	log.Println("Area:", t.Area)
 }
 
-type NationalPark struct {
-	UnitName string `json:"name"`
-	UnitCode string `json:"code"`
-	GeomData string `json:"geom"`
+func (t *Tree) GetCenter() {
+	var a struct {
+		Center string
+	}
+	db.Table("tree_geoms").Select("ST_AsGeoJSON(ST_Centroid(geom)) as center").Where("latin_name = ?", t.LatinName).Scan(&a)
+
+	t.Center = a.Center
+	log.Println("Center:", t.Center)
 }
 
 func showTreesHandler(w http.ResponseWriter, r *http.Request) {
@@ -69,6 +74,7 @@ func showTreesHandler(w http.ResponseWriter, r *http.Request) {
 		db.First(&tree)
 		tree.GetGeodata()
 		tree.GetArea()
+		tree.GetCenter()
 
 		return tree
 	})
@@ -107,6 +113,12 @@ func treesHandler(w http.ResponseWriter, r *http.Request) {
 	})
 
 	render.RenderJson(w, trees)
+}
+
+type NationalPark struct {
+	UnitName string `json:"name"`
+	UnitCode string `json:"code"`
+	GeomData string `json:"geom"`
 }
 
 func nearbyParksHandler(w http.ResponseWriter, r *http.Request) {
