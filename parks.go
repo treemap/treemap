@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	render "github.com/abhiyerra/gowebcommons/render"
-	_ "github.com/lib/pq"
 	"log"
 	"net/http"
 )
