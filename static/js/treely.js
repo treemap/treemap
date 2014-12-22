@@ -34,45 +34,45 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
             .when('/', {
                 redirectTo: "/trees"
             })
+            .when('/zipcode/:zipcode', {
+                controller:'ShowZipcodeCtrl',
+                templateUrl:'../templates/zipcodes/show.html'
+            })
             .when('/trees', {
                 controller:'TreesCtrl',
-                templateUrl:'../trees.html'
+                templateUrl:'../templates/trees/index.html'
             })
             .when('/trees/nearby', {
                 controller:'NearbyTreesCtrl',
-                templateUrl:'../trees.html'
+                templateUrl:'../templates/trees/index.html'
             })
             .when('/trees/:treeId', {
                 controller:'ShowTreeCtrl',
-                templateUrl:'../show.html'
+                templateUrl:'../templates/trees/show.html'
             })
             .when('/parks/nearby', {
                 controller:'NearbyParksCtrl',
-                templateUrl:'../parks.html'
+                templateUrl:'../templates/parks/index.html'
             })
             .when('/parks', {
                 controller:'ParksCtrl',
-                templateUrl:'../parks.html'
+                templateUrl:'../templates/parks/index.html'
             })
             .when('/lakes/nearby', {
                 controller:'NearbyLakesCtrl',
-                templateUrl:'../lakes.html'
+                templateUrl:'../templates/lakes/index.html'
             })
             .when('/lakes', {
                 controller:'LakesCtrl',
-                templateUrl:'../lakes.html'
+                templateUrl:'../templates/lakes/index.html'
             })
             .when('/rivers/nearby', {
                 controller:'NearbyRiversCtrl',
-                templateUrl:'../rivers.html'
+                templateUrl:'../templates/rivers/index.html'
             })
             .when('/rivers', {
                 controller:'RiversCtrl',
-                templateUrl:'../rivers.html'
-            })
-            .when('/zipcode/:zipcode', {
-                controller:'ShowZipcodeCtrl',
-                templateUrl:'../templates/zipcode/show.html'
+                templateUrl:'../templates/rivers/index.html'
             })
             .otherwise({
                 redirectTo:'/'
