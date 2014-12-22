@@ -1,5 +1,11 @@
 <div>
-  <h1>{{ zipcode.number }}</h1>
+  <h1>ZipCode: {{ zipcode.number }}</h1>
+</div>
+
+<div>
+  <form novalidate class="simple-form">
+    Enter Zipcode: <input type="text" ng-model="entered_number" /><br />
+  </form>
 </div>
 
 <div class="row placeholders">

@@ -54,6 +54,22 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
                 controller:'ParksCtrl',
                 templateUrl:'../parks.html'
             })
+            .when('/lakes/nearby', {
+                controller:'NearbyLakesCtrl',
+                templateUrl:'../lakes.html'
+            })
+            .when('/lakes', {
+                controller:'LakesCtrl',
+                templateUrl:'../lakes.html'
+            })
+            .when('/rivers/nearby', {
+                controller:'NearbyRiversCtrl',
+                templateUrl:'../rivers.html'
+            })
+            .when('/rivers', {
+                controller:'RiversCtrl',
+                templateUrl:'../rivers.html'
+            })
             .when('/zipcode/:zipcode', {
                 controller:'ShowZipcodeCtrl',
                 templateUrl:'../templates/zipcode/show.html'
@@ -161,6 +177,112 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
 
                         console.log(i);
                         L.geoJson(JSON.parse($scope.parks[i].geom)).addTo($scope.map);
+                    }
+                    cfpLoadingBar.complete()
+
+                }).
+                error(function(data, status, headers, config) {});
+        });
+    })
+    .controller('LakesCtrl', function($scope, $http, $routeParams, cfpLoadingBar) {
+        $scope.lakes = {}
+        $scope.map = BuildMap('map-container');
+
+        $http.get(SarpaServiceDiscovery.treemap[0] + '/lakes').
+            success(function(data, status, headers, config) {
+                cfpLoadingBar.start();
+                $scope.lakes = data;
+
+                for(var i = 0; i < $scope.lakes.length; i++) {
+                    cfpLoadingBar.inc();
+
+                    L.geoJson(JSON.parse($scope.lakes[i].geom)).addTo($scope.map);
+                }
+                cfpLoadingBar.complete()
+
+            }).
+            error(function(data, status, headers, config) {});
+    })
+    .controller('NearbyLakesCtrl', function($scope, $http, cfpLoadingBar) {
+        $scope.lakes = {}
+        $scope.map = BuildMap('map-container');
+
+        cfpLoadingBar.start();
+        navigator.geolocation.getCurrentPosition(function(position) {
+            cfpLoadingBar.complete()
+            $scope.longitude = position.coords.longitude;
+            $scope.latitude = position.coords.latitude;
+
+            $http.get(SarpaServiceDiscovery.treemap[0] + '/lakes/nearby',
+                      {
+                          params: {
+                              lat: position.coords.latitude,
+                              long: position.coords.longitude
+
+                          }
+                      }).
+                success(function(data, status, headers, config) {
+                    cfpLoadingBar.start();
+                    $scope.lakes = data;
+
+                    for(var i = 0; i < $scope.lakes.length; i++) {
+                        cfpLoadingBar.inc();
+
+                        console.log(i);
+                        L.geoJson(JSON.parse($scope.lakes[i].geom)).addTo($scope.map);
+                    }
+                    cfpLoadingBar.complete()
+
+                }).
+                error(function(data, status, headers, config) {});
+        });
+    })
+    .controller('RiversCtrl', function($scope, $http, $routeParams, cfpLoadingBar) {
+        $scope.rivers = {}
+        $scope.map = BuildMap('map-container');
+
+        $http.get(SarpaServiceDiscovery.treemap[0] + '/rivers').
+            success(function(data, status, headers, config) {
+                cfpLoadingBar.start();
+                $scope.rivers = data;
+
+                for(var i = 0; i < $scope.rivers.length; i++) {
+                    cfpLoadingBar.inc();
+
+                    L.geoJson(JSON.parse($scope.rivers[i].geom)).addTo($scope.map);
+                }
+                cfpLoadingBar.complete()
+
+            }).
+            error(function(data, status, headers, config) {});
+    })
+    .controller('NearbyRiversCtrl', function($scope, $http, cfpLoadingBar) {
+        $scope.rivers = {}
+        $scope.map = BuildMap('map-container');
+
+        cfpLoadingBar.start();
+        navigator.geolocation.getCurrentPosition(function(position) {
+            cfpLoadingBar.complete()
+            $scope.longitude = position.coords.longitude;
+            $scope.latitude = position.coords.latitude;
+
+            $http.get(SarpaServiceDiscovery.treemap[0] + '/rivers/nearby',
+                      {
+                          params: {
+                              lat: position.coords.latitude,
+                              long: position.coords.longitude
+
+                          }
+                      }).
+                success(function(data, status, headers, config) {
+                    cfpLoadingBar.start();
+                    $scope.rivers = data;
+
+                    for(var i = 0; i < $scope.rivers.length; i++) {
+                        cfpLoadingBar.inc();
+
+                        console.log(i);
+                        L.geoJson(JSON.parse($scope.rivers[i].geom)).addTo($scope.map);
                     }
                     cfpLoadingBar.complete()
 

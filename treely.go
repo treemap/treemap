@@ -149,6 +149,72 @@ func parksHandler(w http.ResponseWriter, r *http.Request) {
 	render.RenderJson(w, parks)
 }
 
+type River struct {
+	Name     string `json:"name"`
+	GeomData string `json:"geom"`
+}
+
+func nearbyRiversHandler(w http.ResponseWriter, r *http.Request) {
+	var rivers []River
+
+	longitude := r.URL.Query().Get("long")
+	latitude := r.URL.Query().Get("lat")
+	log.Println("Long:", longitude, "Lat:", latitude)
+
+	err := db.Model(River{}).
+		Select("ST_AsGeoJSON(ST_CollectionExtract(geom, 3)) as geom_data, name").
+		Where(fmt.Sprintf("ST_DWithin(ST_GeomFromText('POINT(%s %s)' , 4326)::geography, geom, 160934, true)", longitude, latitude)). // Within 100 miles -> 160934 meters
+		Scan(&rivers)
+	if err != nil {
+		log.Println(err)
+	}
+
+	render.RenderJson(w, rivers)
+}
+
+func riversHandler(w http.ResponseWriter, r *http.Request) {
+	rivers := cache.Get("rivers", func() interface{} {
+		var rivers []River
+		db.Model(River{}).Select("ST_AsGeoJSON(ST_CollectionExtract(geom, 3)) as geom_data, name").Scan(&rivers)
+		return rivers
+	})
+
+	render.RenderJson(w, rivers)
+}
+
+type Lake struct {
+	Name     string `json:"name"`
+	GeomData string `json:"geom"`
+}
+
+func nearbyLakesHandler(w http.ResponseWriter, r *http.Request) {
+	var lakes []Lake
+
+	longitude := r.URL.Query().Get("long")
+	latitude := r.URL.Query().Get("lat")
+	log.Println("Long:", longitude, "Lat:", latitude)
+
+	err := db.Model(Lake{}).
+		Select("ST_AsGeoJSON(ST_CollectionExtract(geom, 3)) as geom_data, name").
+		Where(fmt.Sprintf("ST_DWithin(ST_GeomFromText('POINT(%s %s)' , 4326)::geography, geom, 160934, true)", longitude, latitude)). // Within 100 miles -> 160934 meters
+		Scan(&lakes)
+	if err != nil {
+		log.Println(err)
+	}
+
+	render.RenderJson(w, lakes)
+}
+
+func lakesHandler(w http.ResponseWriter, r *http.Request) {
+	lakes := cache.Get("lakes", func() interface{} {
+		var lakes []Lake
+		db.Model(Lake{}).Select("ST_AsGeoJSON(ST_CollectionExtract(geom, 3)) as geom_data, name").Scan(&lakes)
+		return lakes
+	})
+
+	render.RenderJson(w, lakes)
+}
+
 type Zipcode struct {
 	Number   string `json:"number"`
 	GeomData string `json:"geom"`
@@ -205,6 +271,10 @@ func main() {
 	r.HandleFunc("/trees", treesHandler).Methods("GET")
 	r.HandleFunc("/parks/nearby", nearbyParksHandler).Methods("GET")
 	r.HandleFunc("/parks", parksHandler).Methods("GET")
+	r.HandleFunc("/lakes/nearby", nearbyLakesHandler).Methods("GET")
+	r.HandleFunc("/lakes", lakesHandler).Methods("GET")
+	r.HandleFunc("/rivers/nearby", nearbyRiversHandler).Methods("GET")
+	r.HandleFunc("/rivers", riversHandler).Methods("GET")
 	r.HandleFunc("/zipcode/{zipcode}", showZipCodeHandler).Methods("GET")
 
 	http.Handle("/", r)
