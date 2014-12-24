@@ -51,7 +51,6 @@ func init() {
 
 func main() {
 	r := mux.NewRouter()
-	r.HandleFunc("/trees/nearby", nearbyTreesHandler).Methods("GET")
 	r.HandleFunc("/trees/{treeId}", showTreesHandler).Methods("GET")
 	r.HandleFunc("/trees", treesHandler).Methods("GET")
 
@@ -64,7 +63,8 @@ func main() {
 	r.HandleFunc("/rivers/nearby", nearbyHydrologyHandler("rivers")).Methods("GET")
 	r.HandleFunc("/rivers", hydrologyHandler("rivers")).Methods("GET")
 
-	r.HandleFunc("/zipcode/{zipcode}", showZipCodeHandler).Methods("GET")
+	r.HandleFunc("/zipcodes/{zipcode}/trees", zipcodeTreesHandler).Methods("GET")
+	r.HandleFunc("/zipcodes/{zipcode}", showZipCodeHandler).Methods("GET")
 
 	http.Handle("/", r)
 	http.ListenAndServe(":3001", nil)

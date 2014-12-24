@@ -68,15 +68,17 @@ func showTreesHandler(w http.ResponseWriter, r *http.Request) {
 	render.RenderJson(w, tree)
 }
 
-func nearbyTreesHandler(w http.ResponseWriter, r *http.Request) {
+func zipcodeTreesHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	zipcode := vars["zipcode"]
+
+	log.Println("Zipcode", zipcode)
+
 	var trees []Tree
 
-	longitude := r.URL.Query().Get("long")
-	latitude := r.URL.Query().Get("lat")
-	log.Println("Long:", longitude, "Lat:", latitude)
-
 	err := db.Model(Tree{}).Select("distinct trees.id, trees.latin_name, trees.common_name").
-		Joins(fmt.Sprintf("INNER JOIN tree_geoms ON tree_geoms.latin_name = trees.latin_name AND ST_DWithin(ST_GeomFromText('POINT(%s %s)' , 4326)::geography, tree_geoms.geom, 160934 , true)", longitude, latitude)).
+		// TODO: Sql injection here. Need to sanatize this.
+		Joins(fmt.Sprintf("INNER JOIN tree_geoms ON tree_geoms.latin_name = trees.latin_name INNER JOIN zipcodes ON zipcodes.geoid10 = '%s' AND ST_DWithin(zipcodes.geom, tree_geoms.geom, 160934 , true)", zipcode)).
 		Order("trees.latin_name asc").Scan(&trees)
 
 	if err != nil {

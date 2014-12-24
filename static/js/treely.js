@@ -32,7 +32,11 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
     .config(function($routeProvider) {
         $routeProvider
             .when('/', {
-                redirectTo: "/trees"
+                redirectTo: "/estate"
+            })
+            .when('/estate', {
+                controller:'EstateCtrl',
+                templateUrl:'../templates/estate/index.html'
             })
             .when('/zipcode/:zipcode', {
                 controller:'ShowZipcodeCtrl',
@@ -40,10 +44,6 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
             })
             .when('/trees', {
                 controller:'TreesCtrl',
-                templateUrl:'../templates/trees/index.html'
-            })
-            .when('/trees/nearby', {
-                controller:'NearbyTreesCtrl',
                 templateUrl:'../templates/trees/index.html'
             })
             .when('/trees/:treeId', {
@@ -81,6 +81,21 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
     .config(function(cfpLoadingBarProvider) {
         cfpLoadingBarProvider.includeSpinner = true;
     })
+    .controller('EstateCtrl', function($scope, $http) {
+
+    })
+    .controller('NearbyTreesCtrl', function($scope, $http, cfpLoadingBar) {
+        $scope.trees = [];
+
+        $scope.$watch("zipcode", function(zipcode, oldValue) {
+            $http.get(SarpaServiceDiscovery.treemap[0] + '/zipcodes/' + zipcode + '/trees').
+                success(function(data, status, headers, config) {
+                    $scope.trees = data;
+                }).
+                error(function(data, status, headers, config) {
+                });
+        });
+    })
     .controller('TreesCtrl', function($scope, $http) {
         $scope.trees = [];
 
@@ -90,31 +105,6 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
             }).
             error(function(data, status, headers, config) {});
 
-    })
-    .controller('NearbyTreesCtrl', function($scope, $http, cfpLoadingBar) {
-        $scope.trees = [];
-
-        cfpLoadingBar.start();
-        navigator.geolocation.getCurrentPosition(function(position) {
-            cfpLoadingBar.complete()
-            $scope.longitude = position.coords.longitude;
-            $scope.latitude = position.coords.latitude;
-
-            $http.get(SarpaServiceDiscovery.treemap[0] + '/trees/nearby',
-                      {
-                          params: {
-                              lat: position.coords.latitude,
-                              long: position.coords.longitude
-                          }
-                      }).
-                success(function(data, status, headers, config) {
-                    cfpLoadingBar.inc();
-                    $scope.trees = data;
-                }).
-                error(function(data, status, headers, config) {
-                });
-
-        });
     })
     .controller('ShowTreeCtrl', function($scope, $http, $routeParams) {
         $scope.tree = {}
