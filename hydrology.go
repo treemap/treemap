@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	render "github.com/abhiyerra/gowebcommons/render"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 )
@@ -12,8 +13,11 @@ type Hydrology struct {
 	GeomData string `json:"geom"`
 }
 
-func nearbyHydrologyHandler(hydroType string) func(w http.ResponseWriter, r *http.Request) {
+func zipcodeHydrologyHandler(hydroType string) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		zipcode := vars["zipcode"]
+
 		var hydrology []Hydrology
 
 		longitude := r.URL.Query().Get("long")
@@ -21,8 +25,8 @@ func nearbyHydrologyHandler(hydroType string) func(w http.ResponseWriter, r *htt
 		log.Println("Hydro Type:", hydroType, "Long:", longitude, "Lat:", latitude)
 
 		err := db.Table(hydroType).
-			Select("ST_AsGeoJSON(ST_CollectionExtract(geom, 3)) as geom_data, name").
-			Where(fmt.Sprintf("ST_DWithin(ST_GeomFromText('POINT(%s %s)' , 4326)::geography, geom, 160934, true)", longitude, latitude)). // Within 100 miles -> 160934 meters
+			Select(fmt.Sprintf("ST_AsGeoJSON(ST_CollectionExtract(%s.geom, 3)) as geom_data, %s.name", hydroType, hydroType)).
+			Joins(fmt.Sprintf("INNER JOIN zipcodes ON zipcodes.geoid10 = '%s' AND ST_DWithin(zipcodes.geom, %s.geom, 160934 , true)", zipcode, hydroType)).
 			Scan(&hydrology)
 		if err != nil {
 			log.Println(err)

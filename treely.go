@@ -57,12 +57,11 @@ func main() {
 	r.HandleFunc("/parks/nearby", nearbyParksHandler).Methods("GET")
 	r.HandleFunc("/parks", parksHandler).Methods("GET")
 
-	r.HandleFunc("/lakes/nearby", nearbyHydrologyHandler("lakes")).Methods("GET")
 	r.HandleFunc("/lakes", hydrologyHandler("lakes")).Methods("GET")
-
-	r.HandleFunc("/rivers/nearby", nearbyHydrologyHandler("rivers")).Methods("GET")
 	r.HandleFunc("/rivers", hydrologyHandler("rivers")).Methods("GET")
 
+	r.HandleFunc("/zipcodes/{zipcode}/lakes", zipcodeHydrologyHandler("lakes")).Methods("GET")
+	r.HandleFunc("/zipcodes/{zipcode}/rivers", zipcodeHydrologyHandler("rivers")).Methods("GET")
 	r.HandleFunc("/zipcodes/{zipcode}/trees", zipcodeTreesHandler).Methods("GET")
 	r.HandleFunc("/zipcodes/{zipcode}", showZipCodeHandler).Methods("GET")
 
