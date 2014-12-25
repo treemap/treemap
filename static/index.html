@@ -36,7 +36,7 @@
     <script src="/js/treely.js"></script>
   </head>
   <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
       <div class="container-fluid">
 
         <div class="navbar-header">
@@ -45,25 +45,24 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
             <li><a ng-href="/#/trees">Trees</a></li>
-            <li><a ng-href="/#/trees/nearby">Nearby Trees</a></li>
             <li><a ng-href="/#/parks">Parks</a></li>
-            <li><a ng-href="/#/parks/nearby">Nearby Parks</a></li>
             <li><a ng-href="/#/lakes">Lakes</a></li>
-            <li><a ng-href="/#/lakes/nearby">Nearby Lakes</a></li>
             <li><a ng-href="/#/rivers">Rivers</a></li>
-            <li><a ng-href="/#/rivers/nearby">Nearby Rivers</a></li>
-
-            <li><a ng-href="/#/zipcode/94103">Zip Codes</a></li>
           </ul>
+
+          <form class="navbar-form navbar-right" novalidate role="search">
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="Zip Code">
+            </div>
+            <button type="submit" class="btn btn-default">Search</button>
+          </form>
         </div>
       </div>
     </nav>
 
     <div class="container-fluid">
       <div class="row">
-        <div class="col-sm-9 col-md-10 main">
-          <div ng-view></div>
-        </div>
+        <div class="main" ng-view></div>
       </div>
     </div>
   </body>

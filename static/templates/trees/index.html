@@ -1,19 +1,19 @@
 <div>
-    <h1>Trees {{ longitude }} {{ latitude }}</h1>
+  <h1>Trees {{ longitude }} {{ latitude }}</h1>
 
-    <table >
-        <thead>
-            <tr>
-                <th>Common Name</th>
-                <th>Latin Name</th>
-            </tr>
-        </thead>
+  <table >
+    <thead>
+      <tr>
+        <th>Common Name</th>
+        <th>Latin Name</th>
+      </tr>
+    </thead>
 
-        <tbody>
-            <tr ng-repeat="tree in trees">
-                <td><a ng-href="/#/trees/{{ tree.id }}">{{ tree.common_name }}</a></td>
-                <td>{{ tree.latin_name }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <tbody>
+      <tr ng-repeat="tree in trees">
+        <td><a ng-href="/#/trees/{{ tree.id }}">{{ tree.common_name }}</a></td>
+        <td>{{ tree.latin_name }}</td>
+      </tr>
+    </tbody>
+  </table>
 </div>

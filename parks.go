@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	render "github.com/abhiyerra/gowebcommons/render"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 )
@@ -13,20 +14,26 @@ type NationalPark struct {
 	GeomData string `json:"geom"`
 }
 
-func nearbyParksHandler(w http.ResponseWriter, r *http.Request) {
-	var parks []NationalPark
+func zipcodeParksHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	zipcode := vars["zipcode"]
 
-	longitude := r.URL.Query().Get("long")
-	latitude := r.URL.Query().Get("lat")
-	log.Println("Long:", longitude, "Lat:", latitude)
+	log.Println("Zipcode", zipcode)
 
-	err := db.Model(NationalPark{}).
-		Select("ST_AsGeoJSON(ST_CollectionExtract(geom, 3)) as geom_data, unit_name, unit_code").
-		Where(fmt.Sprintf("ST_DWithin(ST_GeomFromText('POINT(%s %s)' , 4326)::geography, geom, 160934, true)", longitude, latitude)). // Within 100 miles -> 160934 meters
-		Scan(&parks)
-	if err != nil {
-		log.Println(err)
-	}
+	parks := cache.Get("parks/"+vars["zipcode"], func() interface{} {
+		var parks []NationalPark
+
+		err := db.Model(NationalPark{}).
+			Select("ST_AsGeoJSON(ST_CollectionExtract(national_parks.geom, 3)) as geom_data, national_parks.unit_name, national_parks.unit_code").
+			Joins(fmt.Sprintf("INNER JOIN zipcodes ON zipcodes.geoid10 = '%s' AND ST_DWithin(zipcodes.geom, national_parks.geom, 80934 , true)", zipcode)).
+			Scan(&parks)
+
+		if err != nil {
+			log.Println(err)
+		}
+
+		return parks
+	})
 
 	render.RenderJson(w, parks)
 }

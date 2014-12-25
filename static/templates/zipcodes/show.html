@@ -1,13 +1,35 @@
 <div>
-  <h1>ZipCode: {{ zipcode.number }}</h1>
-</div>
-
-<div>
-  <form novalidate class="simple-form">
-    Enter Zipcode: <input type="text" ng-model="entered_number" /><br />
-  </form>
+  <h1>Estate Info for {{ zipcode.number }} Zip Code</h1>
 </div>
 
 <div class="row placeholders">
   <div id="map-container"></div>
+</div>
+
+
+<div class="row">
+  <div class="col-md-6" ng-controller="NearbyTreesCtrl">
+    <h2>Nearby Tree Species</h2>
+
+    <ul>
+      <li ng-repeat="tree in trees"><a ng-href="/#/trees/{{ tree.id }}">{{ tree.common_name }}</a></li>
+    </ul>
+  </div>
+
+  <div class="col-md-6" ng-controller="NearbyParksCtrl">
+    <h2>Nearby Parks</h2>
+
+    <ul>
+      <li ng-repeat="p in parks"><a ng-href="http://www.nps.gov/{{ p.code }}/index.htm">{{ p.name }}</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <h2>River Hydrology</h2>
+  </div>
+  <div class="col-md-6">
+    <h2>Lake Hydrology</h2>
+  </div>
 </div>

@@ -32,11 +32,7 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
     .config(function($routeProvider) {
         $routeProvider
             .when('/', {
-                redirectTo: "/estate"
-            })
-            .when('/estate', {
-                controller:'EstateCtrl',
-                templateUrl:'../templates/estate/index.html'
+                redirectTo: "/zipcode/94103"
             })
             .when('/zipcode/:zipcode', {
                 controller:'ShowZipcodeCtrl',
@@ -81,30 +77,37 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
     .config(function(cfpLoadingBarProvider) {
         cfpLoadingBarProvider.includeSpinner = true;
     })
-    .controller('EstateCtrl', function($scope, $http) {
+    .controller('NearbyParksCtrl', function($scope, $http, cfpLoadingBar) {
+        $scope.parks = {}
 
+        $scope.$watch("zipcode", function(zipcode, oldValue) {
+            $http.get(SarpaServiceDiscovery.treemap[0] + '/zipcodes/' + zipcode.number + '/parks').
+                success(function(data, status, headers, config) {
+                    cfpLoadingBar.start();
+                    $scope.parks = data;
+
+                    for(var i = 0; i < $scope.parks.length; i++) {
+                        cfpLoadingBar.inc();
+
+                        console.log(i);
+                        L.geoJson(JSON.parse($scope.parks[i].geom)).addTo($scope.map);
+                    }
+                    cfpLoadingBar.complete()
+                }).
+                error(function(data, status, headers, config) {});
+        });
     })
     .controller('NearbyTreesCtrl', function($scope, $http, cfpLoadingBar) {
         $scope.trees = [];
 
         $scope.$watch("zipcode", function(zipcode, oldValue) {
-            $http.get(SarpaServiceDiscovery.treemap[0] + '/zipcodes/' + zipcode + '/trees').
+            $http.get(SarpaServiceDiscovery.treemap[0] + '/zipcodes/' + zipcode.number + '/trees').
                 success(function(data, status, headers, config) {
                     $scope.trees = data;
                 }).
                 error(function(data, status, headers, config) {
                 });
-        });
-    })
-    .controller('TreesCtrl', function($scope, $http) {
-        $scope.trees = [];
-
-        $http.get(SarpaServiceDiscovery.treemap[0] + '/trees').
-            success(function(data, status, headers, config) {
-                $scope.trees = data;
-            }).
-            error(function(data, status, headers, config) {});
-
+        })
     })
     .controller('ShowTreeCtrl', function($scope, $http, $routeParams) {
         $scope.tree = {}
@@ -120,6 +123,16 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
                 $scope.map.setView(center.coordinates.reverse(), 6);
             }).
             error(function(data, status, headers, config) {});
+    })
+    .controller('TreesCtrl', function($scope, $http) {
+        $scope.trees = [];
+
+        $http.get(SarpaServiceDiscovery.treemap[0] + '/trees').
+            success(function(data, status, headers, config) {
+                $scope.trees = data;
+            }).
+            error(function(data, status, headers, config) {});
+
     })
     .controller('ParksCtrl', function($scope, $http, $routeParams, cfpLoadingBar) {
         $scope.parks = {}
@@ -139,40 +152,6 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
 
             }).
             error(function(data, status, headers, config) {});
-    })
-    .controller('NearbyParksCtrl', function($scope, $http, cfpLoadingBar) {
-        $scope.parks = {}
-        $scope.map = BuildMap('map-container');
-
-        cfpLoadingBar.start();
-        navigator.geolocation.getCurrentPosition(function(position) {
-            cfpLoadingBar.complete()
-            $scope.longitude = position.coords.longitude;
-            $scope.latitude = position.coords.latitude;
-
-            $http.get(SarpaServiceDiscovery.treemap[0] + '/parks/nearby',
-                      {
-                          params: {
-                              lat: position.coords.latitude,
-                              long: position.coords.longitude
-
-                          }
-                      }).
-                success(function(data, status, headers, config) {
-                    cfpLoadingBar.start();
-                    $scope.parks = data;
-
-                    for(var i = 0; i < $scope.parks.length; i++) {
-                        cfpLoadingBar.inc();
-
-                        console.log(i);
-                        L.geoJson(JSON.parse($scope.parks[i].geom)).addTo($scope.map);
-                    }
-                    cfpLoadingBar.complete()
-
-                }).
-                error(function(data, status, headers, config) {});
-        });
     })
     .controller('LakesCtrl', function($scope, $http, $routeParams, cfpLoadingBar) {
         $scope.lakes = {}
@@ -284,7 +263,7 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
         $scope.zipcode = {}
         $scope.map = BuildMap('map-container');
 
-        $http.get(SarpaServiceDiscovery.treemap[0] + '/zipcode/' + $routeParams.zipcode).
+        $http.get(SarpaServiceDiscovery.treemap[0] + '/zipcodes/' + $routeParams.zipcode).
             success(function(data, status, headers, config) {
                 $scope.zipcode = data;
 
