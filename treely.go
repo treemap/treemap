@@ -87,6 +87,45 @@ func showHandler(w http.ResponseWriter, r *http.Request) {
 	render.RenderJson(w, z)
 }
 
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	table := vars["table"]
+
+	z := cache.Get(table, func() interface{} {
+		switch table {
+		case "trees":
+			var trees []Tree
+
+			err := db.Model(Tree{}).Select("id, latin_name, common_name").Scan(&trees)
+			if err != nil {
+				log.Println(err)
+			}
+
+			return trees
+		case "parks":
+			var parks []NationalPark
+			db.Model(NationalPark{}).Select("ST_AsGeoJSON(ST_CollectionExtract(geom, 3)) as geom_data, unit_name, unit_code").Scan(&parks)
+			return parks
+		case "lakes":
+			var hydrology []Hydrology
+			db.Table("lakes").Select("ST_AsGeoJSON(ST_CollectionExtract(geom, 3)) as geom_data, name").Scan(&hydrology)
+
+			return hydrology
+
+		case "rivers":
+			var hydrology []Hydrology
+			db.Table("rivers").Select("ST_AsGeoJSON(ST_CollectionExtract(geom, 3)) as geom_data, name").Scan(&hydrology)
+
+			return hydrology
+
+		}
+
+		return nil
+	})
+
+	render.RenderJson(w, z)
+}
+
 func init() {
 	etcdHosts := os.Getenv("ETCD_HOSTS")
 	if etcdHosts == "" {
@@ -108,15 +147,9 @@ func init() {
 
 func main() {
 	r := mux.NewRouter()
-	r.HandleFunc("/{table}/{resourceId}", showHandler).Methods("GET")
-	r.HandleFunc("/trees", treesHandler).Methods("GET")
-
-	r.HandleFunc("/parks", parksHandler).Methods("GET")
-	r.HandleFunc("/lakes", hydrologyHandler("lakes")).Methods("GET")
-	r.HandleFunc("/rivers", hydrologyHandler("rivers")).Methods("GET")
-
 	r.HandleFunc("/zipcodes/{zipcode}/{table}", zipcodeTableHandler).Methods("GET")
 	r.HandleFunc("/{table}/{resourceId}", showHandler).Methods("GET")
+	r.HandleFunc("/{table}", indexHandler).Methods("GET")
 
 	http.Handle("/", r)
 	http.ListenAndServe(":3001", nil)

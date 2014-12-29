@@ -1,9 +1,7 @@
 package main
 
 import (
-	render "github.com/abhiyerra/gowebcommons/render"
 	"log"
-	"net/http"
 )
 
 type Tree struct {
@@ -46,19 +44,4 @@ func (t *Tree) GetCenter() {
 
 	t.Center = a.Center
 	log.Println("Center:", t.Center)
-}
-
-func treesHandler(w http.ResponseWriter, r *http.Request) {
-	trees := cache.Get("trees", func() interface{} {
-		var trees []Tree
-
-		err := db.Model(Tree{}).Select("id, latin_name, common_name").Scan(&trees)
-		if err != nil {
-			log.Println(err)
-		}
-
-		return trees
-	})
-
-	render.RenderJson(w, trees)
 }
