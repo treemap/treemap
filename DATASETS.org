@@ -16,3 +16,6 @@
 * Zipcode Data
 
  - ftp://ftp2.census.gov/geo/tiger/TIGER2014/ZCTA5/
+* State Data
+
+ - ftp://ftp2.census.gov/geo/tiger/TIGER2014/STATE

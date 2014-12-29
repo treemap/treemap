@@ -20,7 +20,7 @@ func zipcodeParksHandler(w http.ResponseWriter, r *http.Request) {
 
 	log.Println("Zipcode", zipcode)
 
-	parks := cache.Get("parks/"+vars["zipcode"], func() interface{} {
+	parks := cache.Get("parks/"+zipcode, func() interface{} {
 		var parks []NationalPark
 
 		err := db.Model(NationalPark{}).

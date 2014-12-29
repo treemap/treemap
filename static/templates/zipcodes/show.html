@@ -26,10 +26,19 @@
 </div>
 
 <div class="row">
-  <div class="col-md-6">
+  <div class="col-md-6" ng-controller="NearbyHydrologyCtrl" ng-init="init('rivers')">
     <h2>River Hydrology</h2>
+
+    <ul>
+      <li ng-repeat="p in hydrology">{{ p.name }}</li>
+    </ul>
   </div>
-  <div class="col-md-6">
+
+  <div class="col-md-6" ng-controller="NearbyHydrologyCtrl" ng-init="init('lakes')">
     <h2>Lake Hydrology</h2>
+
+    <ul>
+      <li ng-repeat="p in hydrology">{{ p.name }}</li>
+    </ul>
   </div>
 </div>

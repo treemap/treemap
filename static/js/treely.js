@@ -109,6 +109,32 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
                 });
         })
     })
+    .controller('NearbyHydrologyCtrl', function($scope, $http, cfpLoadingBar) {
+        $scope.hydrology = {};
+        $scope.hydroType = "lakes";
+
+        $scope.init = function(hydroType) {
+            $scope.hydroType = hydroType;
+        }
+
+        $scope.$watch("zipcode", function(zipcode, oldValue) {
+            $http.get(SarpaServiceDiscovery.treemap[0] + '/zipcodes/' + zipcode.number + '/' + $scope.hydroType).
+                success(function(data, status, headers, config) {
+                    cfpLoadingBar.start();
+                    $scope.hydrology = data;
+
+                    for(var i = 0; i < $scope.hydrology.length; i++) {
+                        cfpLoadingBar.inc();
+
+                        console.log(i);
+                        L.geoJson(JSON.parse($scope.hydrology[i].geom)).addTo($scope.map);
+                    }
+                    cfpLoadingBar.complete()
+
+                }).
+                error(function(data, status, headers, config) {});
+        });
+    })
     .controller('ShowTreeCtrl', function($scope, $http, $routeParams) {
         $scope.tree = {}
         $scope.map = BuildMap('map-container');
@@ -172,40 +198,6 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
             }).
             error(function(data, status, headers, config) {});
     })
-    .controller('NearbyLakesCtrl', function($scope, $http, cfpLoadingBar) {
-        $scope.lakes = {}
-        $scope.map = BuildMap('map-container');
-
-        cfpLoadingBar.start();
-        navigator.geolocation.getCurrentPosition(function(position) {
-            cfpLoadingBar.complete()
-            $scope.longitude = position.coords.longitude;
-            $scope.latitude = position.coords.latitude;
-
-            $http.get(SarpaServiceDiscovery.treemap[0] + '/lakes/nearby',
-                      {
-                          params: {
-                              lat: position.coords.latitude,
-                              long: position.coords.longitude
-
-                          }
-                      }).
-                success(function(data, status, headers, config) {
-                    cfpLoadingBar.start();
-                    $scope.lakes = data;
-
-                    for(var i = 0; i < $scope.lakes.length; i++) {
-                        cfpLoadingBar.inc();
-
-                        console.log(i);
-                        L.geoJson(JSON.parse($scope.lakes[i].geom)).addTo($scope.map);
-                    }
-                    cfpLoadingBar.complete()
-
-                }).
-                error(function(data, status, headers, config) {});
-        });
-    })
     .controller('RiversCtrl', function($scope, $http, $routeParams, cfpLoadingBar) {
         $scope.rivers = {}
         $scope.map = BuildMap('map-container');
@@ -224,40 +216,6 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
 
             }).
             error(function(data, status, headers, config) {});
-    })
-    .controller('NearbyRiversCtrl', function($scope, $http, cfpLoadingBar) {
-        $scope.rivers = {}
-        $scope.map = BuildMap('map-container');
-
-        cfpLoadingBar.start();
-        navigator.geolocation.getCurrentPosition(function(position) {
-            cfpLoadingBar.complete()
-            $scope.longitude = position.coords.longitude;
-            $scope.latitude = position.coords.latitude;
-
-            $http.get(SarpaServiceDiscovery.treemap[0] + '/rivers/nearby',
-                      {
-                          params: {
-                              lat: position.coords.latitude,
-                              long: position.coords.longitude
-
-                          }
-                      }).
-                success(function(data, status, headers, config) {
-                    cfpLoadingBar.start();
-                    $scope.rivers = data;
-
-                    for(var i = 0; i < $scope.rivers.length; i++) {
-                        cfpLoadingBar.inc();
-
-                        console.log(i);
-                        L.geoJson(JSON.parse($scope.rivers[i].geom)).addTo($scope.map);
-                    }
-                    cfpLoadingBar.complete()
-
-                }).
-                error(function(data, status, headers, config) {});
-        });
     })
     .controller('ShowZipcodeCtrl', function($scope, $http, $routeParams) {
         $scope.zipcode = {}

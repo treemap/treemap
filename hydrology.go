@@ -18,19 +18,22 @@ func zipcodeHydrologyHandler(hydroType string) func(w http.ResponseWriter, r *ht
 		vars := mux.Vars(r)
 		zipcode := vars["zipcode"]
 
-		var hydrology []Hydrology
+		hydrology := cache.Get("hydrology/"+hydroType+"/"+zipcode, func() interface{} {
+			var hydrology []Hydrology
 
-		longitude := r.URL.Query().Get("long")
-		latitude := r.URL.Query().Get("lat")
-		log.Println("Hydro Type:", hydroType, "Long:", longitude, "Lat:", latitude)
+			log.Println("Hydro Type:", hydroType, zipcode)
 
-		err := db.Table(hydroType).
-			Select(fmt.Sprintf("ST_AsGeoJSON(ST_CollectionExtract(%s.geom, 3)) as geom_data, %s.name", hydroType, hydroType)).
-			Joins(fmt.Sprintf("INNER JOIN zipcodes ON zipcodes.geoid10 = '%s' AND ST_DWithin(zipcodes.geom, %s.geom, 160934 , true)", zipcode, hydroType)).
-			Scan(&hydrology)
-		if err != nil {
-			log.Println(err)
-		}
+			err := db.Table(hydroType).
+				Select(fmt.Sprintf("ST_AsGeoJSON(ST_CollectionExtract(%s.geom, 3)) as geom_data, %s.name", hydroType, hydroType)).
+				Joins(fmt.Sprintf("INNER JOIN zipcodes ON zipcodes.geoid10 = '%s' AND ST_DWithin(zipcodes.geom, %s.geom, 80934 , true)", zipcode, hydroType)).
+				Scan(&hydrology)
+
+			if err != nil {
+				log.Println(err)
+			}
+
+			return hydrology
+		})
 
 		render.RenderJson(w, hydrology)
 	}
