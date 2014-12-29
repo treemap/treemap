@@ -10,6 +10,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 const (
@@ -68,6 +69,16 @@ func showHandler(w http.ResponseWriter, r *http.Request) {
 			z.GetInfo()
 
 			return z
+		case "trees":
+			treeId, _ := strconv.ParseInt(resource, 10, 64)
+
+			tree := Tree{Id: int64(treeId)}
+			db.First(&tree)
+			tree.GetGeodata()
+			tree.GetArea()
+			tree.GetCenter()
+
+			return tree
 		}
 
 		return nil
@@ -97,7 +108,7 @@ func init() {
 
 func main() {
 	r := mux.NewRouter()
-	r.HandleFunc("/trees/{treeId}", showTreesHandler).Methods("GET")
+	r.HandleFunc("/{table}/{resourceId}", showHandler).Methods("GET")
 	r.HandleFunc("/trees", treesHandler).Methods("GET")
 
 	r.HandleFunc("/parks", parksHandler).Methods("GET")

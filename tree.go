@@ -2,10 +2,8 @@ package main
 
 import (
 	render "github.com/abhiyerra/gowebcommons/render"
-	"github.com/gorilla/mux"
 	"log"
 	"net/http"
-	"strconv"
 )
 
 type Tree struct {
@@ -48,23 +46,6 @@ func (t *Tree) GetCenter() {
 
 	t.Center = a.Center
 	log.Println("Center:", t.Center)
-}
-
-func showTreesHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	treeId, _ := strconv.ParseInt(vars["treeId"], 10, 64)
-
-	tree := cache.Get("tree/"+vars["treeId"], func() interface{} {
-		tree := Tree{Id: int64(treeId)}
-		db.First(&tree)
-		tree.GetGeodata()
-		tree.GetArea()
-		tree.GetCenter()
-
-		return tree
-	})
-
-	render.RenderJson(w, tree)
 }
 
 func treesHandler(w http.ResponseWriter, r *http.Request) {
