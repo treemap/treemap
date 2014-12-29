@@ -2,6 +2,7 @@ package main
 
 import (
 	gocache "github.com/abhiyerra/gowebcommons/cache"
+	render "github.com/abhiyerra/gowebcommons/render"
 	"github.com/coreos/go-etcd/etcd"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
@@ -28,6 +29,51 @@ func dbConnect(databaseUrl string) {
 		log.Println(err)
 	}
 	db.LogMode(true)
+}
+
+func zipcodeTableHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	zipcode := vars["zipcode"]
+	table := vars["table"]
+
+	log.Println("Zipcode", zipcode)
+	parks := cache.Get(table+"/"+zipcode, func() interface{} {
+		zc := Zipcode{Number: zipcode}
+		switch table {
+		case "parks":
+			return zc.Parks(50)
+		case "trees":
+			return zc.Trees(50)
+		case "lakes":
+			return zc.Hydrology("lakes", 50)
+		case "rivers":
+			return zc.Hydrology("rivers", 50)
+		}
+
+		return nil
+	})
+
+	render.RenderJson(w, parks)
+}
+
+func showHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	table := vars["table"]
+	resource := vars["resourceId"]
+
+	z := cache.Get(table+"/"+resource, func() interface{} {
+		switch table {
+		case "zipcodes":
+			z := Zipcode{Number: resource}
+			z.GetInfo()
+
+			return z
+		}
+
+		return nil
+	})
+
+	render.RenderJson(w, z)
 }
 
 func init() {
@@ -59,7 +105,7 @@ func main() {
 	r.HandleFunc("/rivers", hydrologyHandler("rivers")).Methods("GET")
 
 	r.HandleFunc("/zipcodes/{zipcode}/{table}", zipcodeTableHandler).Methods("GET")
-	r.HandleFunc("/zipcodes/{zipcode}", showZipCodeHandler).Methods("GET")
+	r.HandleFunc("/{table}/{resourceId}", showHandler).Methods("GET")
 
 	http.Handle("/", r)
 	http.ListenAndServe(":3001", nil)

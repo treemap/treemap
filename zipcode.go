@@ -2,10 +2,7 @@ package main
 
 import (
 	"fmt"
-	render "github.com/abhiyerra/gowebcommons/render"
-	"github.com/gorilla/mux"
 	"log"
-	"net/http"
 )
 
 type Zipcode struct {
@@ -71,43 +68,4 @@ func (zc *Zipcode) Hydrology(hydroType string, distance uint) (hydrology []Hydro
 	}
 
 	return
-}
-
-func showZipCodeHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	zipcode := vars["zipcode"]
-
-	z := cache.Get("zipcode/"+zipcode, func() interface{} {
-		z := Zipcode{Number: zipcode}
-		z.GetInfo()
-
-		return z
-	})
-
-	render.RenderJson(w, z)
-}
-
-func zipcodeTableHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	zipcode := vars["zipcode"]
-	table := vars["table"]
-
-	log.Println("Zipcode", zipcode)
-	parks := cache.Get(table+"/"+zipcode, func() interface{} {
-		zc := Zipcode{Number: zipcode}
-		switch table {
-		case "parks":
-			return zc.Parks(50)
-		case "trees":
-			return zc.Trees(50)
-		case "lakes":
-			return zc.Hydrology("lakes", 50)
-		case "rivers":
-			return zc.Hydrology("rivers", 50)
-		}
-
-		return nil
-	})
-
-	render.RenderJson(w, parks)
 }
