@@ -13,32 +13,6 @@ type Hydrology struct {
 	GeomData string `json:"geom"`
 }
 
-func zipcodeHydrologyHandler(hydroType string) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		vars := mux.Vars(r)
-		zipcode := vars["zipcode"]
-
-		hydrology := cache.Get("hydrology/"+hydroType+"/"+zipcode, func() interface{} {
-			var hydrology []Hydrology
-
-			log.Println("Hydro Type:", hydroType, zipcode)
-
-			err := db.Table(hydroType).
-				Select(fmt.Sprintf("ST_AsGeoJSON(ST_CollectionExtract(%s.geom, 3)) as geom_data, %s.name", hydroType, hydroType)).
-				Joins(fmt.Sprintf("INNER JOIN zipcodes ON zipcodes.geoid10 = '%s' AND ST_DWithin(zipcodes.geom, %s.geom, 80934 , true)", zipcode, hydroType)).
-				Scan(&hydrology)
-
-			if err != nil {
-				log.Println(err)
-			}
-
-			return hydrology
-		})
-
-		render.RenderJson(w, hydrology)
-	}
-}
-
 func hydrologyHandler(hydroType string) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		hydrology := cache.Get(hydroType, func() interface{} {
