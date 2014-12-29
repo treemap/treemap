@@ -29,6 +29,10 @@ func milesToMeters(distance uint) string {
 	}
 }
 
+func (zc *Zipcode) GetInfo() {
+	db.Select("geoid10 as number, ST_AsGeoJSON(ST_Centroid(geom)) as center, ST_AsGeoJSON(ST_CollectionExtract(geom, 3)) as geom_data").Where("geoid10 = ?", zc.Number).First(zc)
+}
+
 func (zc *Zipcode) Parks(distance uint) (parks []NationalPark) {
 	err := db.Model(NationalPark{}).
 		Select("ST_AsGeoJSON(ST_CollectionExtract(national_parks.geom, 3)) as geom_data, national_parks.unit_name, national_parks.unit_code").
@@ -75,7 +79,7 @@ func showZipCodeHandler(w http.ResponseWriter, r *http.Request) {
 
 	z := cache.Get("zipcode/"+zipcode, func() interface{} {
 		z := Zipcode{Number: zipcode}
-		db.Select("geoid10 as number, ST_AsGeoJSON(ST_Centroid(geom)) as center, ST_AsGeoJSON(ST_CollectionExtract(geom, 3)) as geom_data").Where("geoid10 = ?", zipcode).First(&z)
+		z.GetInfo()
 
 		return z
 	})
