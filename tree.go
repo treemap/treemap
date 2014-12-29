@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	render "github.com/abhiyerra/gowebcommons/render"
 	"github.com/gorilla/mux"
 	"log"
@@ -66,30 +65,6 @@ func showTreesHandler(w http.ResponseWriter, r *http.Request) {
 	})
 
 	render.RenderJson(w, tree)
-}
-
-func zipcodeTreesHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	zipcode := vars["zipcode"]
-
-	log.Println("Zipcode", zipcode)
-
-	trees := cache.Get("trees/"+vars["zipcode"], func() interface{} {
-		var trees []Tree
-
-		err := db.Model(Tree{}).Select("distinct trees.id, trees.latin_name, trees.common_name").
-			// TODO: Sql injection here. Need to sanatize this.
-			Joins(fmt.Sprintf("INNER JOIN tree_geoms ON tree_geoms.latin_name = trees.latin_name INNER JOIN zipcodes ON zipcodes.geoid10 = '%s' AND ST_DWithin(zipcodes.geom, tree_geoms.geom, 160934 , true)", zipcode)).
-			Order("trees.latin_name asc").Scan(&trees)
-
-		if err != nil {
-			log.Println(err)
-		}
-
-		return trees
-	})
-
-	render.RenderJson(w, trees)
 }
 
 func treesHandler(w http.ResponseWriter, r *http.Request) {

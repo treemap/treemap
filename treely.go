@@ -59,9 +59,6 @@ func main() {
 	r.HandleFunc("/rivers", hydrologyHandler("rivers")).Methods("GET")
 
 	r.HandleFunc("/zipcodes/{zipcode}/{table}", zipcodeTableHandler).Methods("GET")
-	r.HandleFunc("/zipcodes/{zipcode}/lakes", zipcodeHydrologyHandler("lakes")).Methods("GET")
-	r.HandleFunc("/zipcodes/{zipcode}/rivers", zipcodeHydrologyHandler("rivers")).Methods("GET")
-	r.HandleFunc("/zipcodes/{zipcode}/trees", zipcodeTreesHandler).Methods("GET")
 	r.HandleFunc("/zipcodes/{zipcode}", showZipCodeHandler).Methods("GET")
 
 	http.Handle("/", r)

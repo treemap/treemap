@@ -23,14 +23,13 @@ func milesToMeters(distance uint) string {
 		return "160934"
 	case 200:
 		return "321869"
-	}
+	default:
+		return "160934" // Default to 100 miles
 
-	return "0"
+	}
 }
 
 func (zc *Zipcode) Parks(distance uint) (parks []NationalPark) {
-	log.Println("Parks")
-
 	err := db.Model(NationalPark{}).
 		Select("ST_AsGeoJSON(ST_CollectionExtract(national_parks.geom, 3)) as geom_data, national_parks.unit_name, national_parks.unit_code").
 		Joins(fmt.Sprintf("INNER JOIN zipcodes ON zipcodes.geoid10 = '%s' AND ST_DWithin(zipcodes.geom, national_parks.geom, %s, true)", zc.Number, milesToMeters(distance))).
@@ -43,30 +42,31 @@ func (zc *Zipcode) Parks(distance uint) (parks []NationalPark) {
 	return
 }
 
-func zipcodeHydrologyHandler(hydroType string) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		vars := mux.Vars(r)
-		zipcode := vars["zipcode"]
+func (zc *Zipcode) Trees(distance uint) (trees []Tree) {
 
-		hydrology := cache.Get("hydrology/"+hydroType+"/"+zipcode, func() interface{} {
-			var hydrology []Hydrology
+	err := db.Model(Tree{}).Select("distinct trees.id, trees.latin_name, trees.common_name").
+		// TODO: Sql injection here. Need to sanatize this.
+		Joins(fmt.Sprintf("INNER JOIN tree_geoms ON tree_geoms.latin_name = trees.latin_name INNER JOIN zipcodes ON zipcodes.geoid10 = '%s' AND ST_DWithin(zipcodes.geom, tree_geoms.geom, %s, true)", zc.Number, milesToMeters(distance))).
+		Order("trees.latin_name asc").Scan(&trees)
 
-			log.Println("Hydro Type:", hydroType, zipcode)
-
-			err := db.Table(hydroType).
-				Select(fmt.Sprintf("ST_AsGeoJSON(ST_CollectionExtract(%s.geom, 3)) as geom_data, %s.name", hydroType, hydroType)).
-				Joins(fmt.Sprintf("INNER JOIN zipcodes ON zipcodes.geoid10 = '%s' AND ST_DWithin(zipcodes.geom, %s.geom, 80934 , true)", zipcode, hydroType)).
-				Scan(&hydrology)
-
-			if err != nil {
-				log.Println(err)
-			}
-
-			return hydrology
-		})
-
-		render.RenderJson(w, hydrology)
+	if err != nil {
+		log.Println(err)
 	}
+
+	return
+}
+
+func (zc *Zipcode) Hydrology(hydroType string, distance uint) (hydrology []Hydrology) {
+	err := db.Table(hydroType).
+		Select(fmt.Sprintf("ST_AsGeoJSON(ST_CollectionExtract(%s.geom, 3)) as geom_data, %s.name", hydroType, hydroType)).
+		Joins(fmt.Sprintf("INNER JOIN zipcodes ON zipcodes.geoid10 = '%s' AND ST_DWithin(zipcodes.geom, %s.geom, %s, true)", zc.Number, milesToMeters(distance), hydroType)).
+		Scan(&hydrology)
+
+	if err != nil {
+		log.Println(err)
+	}
+
+	return
 }
 
 func showZipCodeHandler(w http.ResponseWriter, r *http.Request) {
@@ -94,6 +94,12 @@ func zipcodeTableHandler(w http.ResponseWriter, r *http.Request) {
 		switch table {
 		case "parks":
 			return zc.Parks(50)
+		case "trees":
+			return zc.Trees(50)
+		case "lakes":
+			return zc.Hydrology("lakes", 50)
+		case "rivers":
+			return zc.Hydrology("rivers", 50)
 		}
 
 		return nil

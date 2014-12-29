@@ -1,10 +1,7 @@
 package main
 
 import (
-	"fmt"
 	render "github.com/abhiyerra/gowebcommons/render"
-	"github.com/gorilla/mux"
-	"log"
 	"net/http"
 )
 
