@@ -221,10 +221,11 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
         $scope.zipcode = {}
         $scope.map = BuildMap('map-container');
 
-        $http.get(SarpaServiceDiscovery.treemap[0] + '/zipcodes/' + $routeParams.zipcode).
+        $http.get('/data/zipcodes/' + $routeParams.zipcode + '.json').
             success(function(data, status, headers, config) {
                 $scope.zipcode = data;
 
+                // Shouldn't need to parse this as well. Should be sent parsed.
                 L.geoJson(JSON.parse($scope.zipcode.geom)).addTo($scope.map);
 
                 var center = JSON.parse($scope.zipcode.center);

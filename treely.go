@@ -1,12 +1,14 @@
 package main
 
 import (
+	"encoding/json"
 	gocache "github.com/abhiyerra/gowebcommons/cache"
 	render "github.com/abhiyerra/gowebcommons/render"
 	"github.com/coreos/go-etcd/etcd"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -124,6 +126,46 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	})
 
 	render.RenderJson(w, z)
+}
+
+func GenerateZipcodesOnS3() {
+	log.Println("Gathering Zipcodes")
+	zipcodes := AllZipcodes()
+
+	log.Println("Got Zipcodes")
+	for i := range zipcodes {
+		log.Println("Writing", zipcodes[i].Number)
+		zipcodes[i].GetInfo()
+
+		os.MkdirAll("static/data/zipcodes", os.ModeDir|os.ModePerm)
+
+		b, err := json.Marshal(zipcodes[i])
+		if err != nil {
+			log.Println("error:", err)
+		}
+
+		// Write the file
+		err = ioutil.WriteFile("static/data/zipcodes/"+zipcodes[i].Number+".json", b, 0644)
+
+		// for _, k := range []string{"trees", "parks", "lakes", "rivers"} {
+		// 	for _, j := range []string{"50", "100", "200"} {
+
+		// 		// Mkdir if it doesn't exist
+		// 		os.MkdirAll("data/"+k+"/"+j, os.ModeDir)
+
+		// 		// Get the Tree information
+		// 		trees := zipcodes[i].Trees(j)
+		// 		b, err := json.Marshal(trees)
+		// 		if err != nil {
+		// 			log.Println("error:", err)
+		// 		}
+
+		// 		// Generate Parks
+
+		// 		// Write the file to disk.
+		// 	}
+		// }
+	}
 }
 
 func init() {

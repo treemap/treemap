@@ -5,12 +5,6 @@ import (
 	"log"
 )
 
-type Zipcode struct {
-	Number   string `json:"number"`
-	GeomData string `json:"geom"`
-	Center   string `json:"center"`
-}
-
 // Yeah, yeah this is a hack...
 func milesToMeters(distance uint) string {
 	switch distance {
@@ -24,6 +18,18 @@ func milesToMeters(distance uint) string {
 		return "160934" // Default to 100 miles
 
 	}
+}
+
+type Zipcode struct {
+	Number   string `json:"number"`
+	GeomData string `json:"geom"`
+	Center   string `json:"center"`
+}
+
+func AllZipcodes() (zipcodes []Zipcode) {
+	db.Model(Zipcode{}).Select("geoid10 as number").Scan(&zipcodes)
+
+	return
 }
 
 func (zc *Zipcode) GetInfo() {
