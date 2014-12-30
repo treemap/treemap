@@ -75,3 +75,18 @@ func (zc *Zipcode) Hydrology(hydroType string, distance uint) (hydrology []Hydro
 
 	return
 }
+
+func (zc *Zipcode) TableData(table string, distance uint) interface{} {
+	switch table {
+	case "parks":
+		return zc.Parks(distance)
+	case "trees":
+		return zc.Trees(distance)
+	case "lakes":
+		return zc.Hydrology("lakes", distance)
+	case "rivers":
+		return zc.Hydrology("rivers", distance)
+	}
+
+	return nil
+}

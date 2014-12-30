@@ -9,6 +9,6 @@ RUN go install github.com/forestly/treely
 
 WORKDIR /go/src/github.com/forestly/treely
 
-ENTRYPOINT /go/bin/treely
+ENTRYPOINT /go/bin/treely serve
 
 EXPOSE 3001
