@@ -13,6 +13,15 @@ type Tree struct {
 	Center     string   `json:"center",sql:"-"`
 }
 
+func AllTrees() (trees []Tree) {
+	err := db.Model(Tree{}).Select("id, latin_name, common_name").Scan(&trees)
+	if err != nil {
+		log.Println(err)
+	}
+
+	return
+}
+
 func (t *Tree) GetGeodata() {
 	rows, err := db.Table("tree_geoms").Select("ST_AsGeoJSON(ST_CollectionExtract(geom, 3)) as geom2").Where("latin_name = ?", t.LatinName).Rows()
 	if err != nil {

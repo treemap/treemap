@@ -30,6 +30,38 @@ func GenerateZipcodes() {
 	}
 }
 
+func GenerateTrees() {
+	log.Println("Gathering Trees")
+	trees := AllTrees()
+
+	log.Println("Got Trees")
+
+	dirName := "static/data/trees"
+	os.MkdirAll(dirName, os.ModeDir|os.ModePerm)
+
+	// Write the tree index file
+	b, err := json.Marshal(trees)
+	if err != nil {
+		log.Println("error:", err)
+	}
+	err = ioutil.WriteFile(dirName+"/index.json", b, 0644)
+
+	for i := range trees {
+		log.Println("Writing", trees[i].LatinName)
+		trees[i].GetGeodata()
+		trees[i].GetArea()
+
+		b, err := json.Marshal(trees[i])
+		if err != nil {
+			log.Println("error:", err)
+		}
+
+		// Write the file
+		err = ioutil.WriteFile(fmt.Sprintf("%s/%d.json", dirName, trees[i].Id), b, 0644)
+
+	}
+}
+
 func GenerateZipcodeTable(tableName string, distance uint) {
 	log.Println("Gathering Zipcodes")
 	zipcodes := AllZipcodes()

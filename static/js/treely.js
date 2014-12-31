@@ -1,5 +1,5 @@
-var BuildMap = function(container) {
-    var container = L.map(container).setView([37.09024, -95.712891], 4);
+function BuildMap() {
+    mapContainer = L.map('map-container').setView([37.09024, -95.712891], 4);
 
     // L.tileLayer('http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
     //     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, Tiles courtesy of <a href="http://hot.openstreetmap.org/" target="_blank">Humanitarian OpenStreetMap Team</a>'
@@ -16,11 +16,10 @@ var BuildMap = function(container) {
 
     L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
         attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community'
-    }).addTo(container);
-
-    return container;
+    }).addTo(mapContainer);
 }
 
+BuildMap();
 
 var AddGeoJsonsToMap = function(geoms, map) {
     for(var i = 0; i < geoms.length; i++) {
@@ -90,7 +89,7 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
                         cfpLoadingBar.inc();
 
                         console.log(i);
-                        L.geoJson(JSON.parse($scope.parks[i].geom)).addTo($scope.map);
+                        L.geoJson(JSON.parse($scope.parks[i].geom)).addTo(mapContainer);
                     }
                     cfpLoadingBar.complete()
                 }).
@@ -127,7 +126,7 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
                         cfpLoadingBar.inc();
 
                         console.log(i);
-                        L.geoJson(JSON.parse($scope.hydrology[i].geom)).addTo($scope.map);
+                        L.geoJson(JSON.parse($scope.hydrology[i].geom)).addTo(mapContainer);
                     }
                     cfpLoadingBar.complete()
 
@@ -137,23 +136,22 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
     })
     .controller('ShowTreeCtrl', function($scope, $http, $routeParams) {
         $scope.tree = {}
-        $scope.map = BuildMap('map-container');
 
-        $http.get(SarpaServiceDiscovery.treemap[0] + '/trees/' + $routeParams.treeId).
+        $http.get('/data/trees/' + $routeParams.treeId + '.json').
             success(function(data, status, headers, config) {
                 $scope.tree = data;
 
-                AddGeoJsonsToMap($scope.tree.geom, $scope.map);
+                AddGeoJsonsToMap($scope.tree.geom, mapContainer);
 
                 var center = JSON.parse($scope.tree.center);
-                $scope.map.setView(center.coordinates.reverse(), 6);
+                mapContainer.setView(center.coordinates.reverse(), 6);
             }).
             error(function(data, status, headers, config) {});
     })
     .controller('TreesCtrl', function($scope, $http) {
         $scope.trees = [];
 
-        $http.get(SarpaServiceDiscovery.treemap[0] + '/trees').
+        $http.get('/data/trees/index.json').
             success(function(data, status, headers, config) {
                 $scope.trees = data;
             }).
@@ -162,7 +160,6 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
     })
     .controller('ParksCtrl', function($scope, $http, $routeParams, cfpLoadingBar) {
         $scope.parks = {}
-        $scope.map = BuildMap('map-container');
 
         $http.get(SarpaServiceDiscovery.treemap[0] + '/parks').
             success(function(data, status, headers, config) {
@@ -172,7 +169,7 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
                 for(var i = 0; i < $scope.parks.length; i++) {
                     cfpLoadingBar.inc();
 
-                    L.geoJson(JSON.parse($scope.parks[i].geom)).addTo($scope.map);
+                    L.geoJson(JSON.parse($scope.parks[i].geom)).addTo(mapContainer);
                 }
                 cfpLoadingBar.complete()
 
@@ -181,7 +178,6 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
     })
     .controller('LakesCtrl', function($scope, $http, $routeParams, cfpLoadingBar) {
         $scope.lakes = {}
-        $scope.map = BuildMap('map-container');
 
         $http.get(SarpaServiceDiscovery.treemap[0] + '/lakes').
             success(function(data, status, headers, config) {
@@ -191,7 +187,7 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
                 for(var i = 0; i < $scope.lakes.length; i++) {
                     cfpLoadingBar.inc();
 
-                    L.geoJson(JSON.parse($scope.lakes[i].geom)).addTo($scope.map);
+                    L.geoJson(JSON.parse($scope.lakes[i].geom)).addTo(mapContainer);
                 }
                 cfpLoadingBar.complete()
 
@@ -200,7 +196,6 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
     })
     .controller('RiversCtrl', function($scope, $http, $routeParams, cfpLoadingBar) {
         $scope.rivers = {}
-        $scope.map = BuildMap('map-container');
 
         $http.get(SarpaServiceDiscovery.treemap[0] + '/rivers').
             success(function(data, status, headers, config) {
@@ -210,7 +205,7 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
                 for(var i = 0; i < $scope.rivers.length; i++) {
                     cfpLoadingBar.inc();
 
-                    L.geoJson(JSON.parse($scope.rivers[i].geom)).addTo($scope.map);
+                    L.geoJson(JSON.parse($scope.rivers[i].geom)).addTo(mapContainer);
                 }
                 cfpLoadingBar.complete()
 
@@ -219,17 +214,16 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
     })
     .controller('ShowZipcodeCtrl', function($scope, $http, $routeParams) {
         $scope.zipcode = {}
-        $scope.map = BuildMap('map-container');
 
         $http.get('/data/zipcodes/' + $routeParams.zipcode + '.json').
             success(function(data, status, headers, config) {
                 $scope.zipcode = data;
 
                 // Shouldn't need to parse this as well. Should be sent parsed.
-                L.geoJson(JSON.parse($scope.zipcode.geom)).addTo($scope.map);
+                L.geoJson(JSON.parse($scope.zipcode.geom)).addTo(mapContainer);
 
                 var center = JSON.parse($scope.zipcode.center);
-                $scope.map.setView(center.coordinates.reverse(), 10);
+                mapContainer.setView(center.coordinates.reverse(), 10);
             }).
             error(function(data, status, headers, config) {});
     });
