@@ -161,7 +161,7 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
     .controller('ParksCtrl', function($scope, $http, $routeParams, cfpLoadingBar) {
         $scope.parks = {}
 
-        $http.get(SarpaServiceDiscovery.treemap[0] + '/parks').
+        $http.get('/data/parks/index.json').
             success(function(data, status, headers, config) {
                 cfpLoadingBar.start();
                 $scope.parks = data;

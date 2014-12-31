@@ -62,6 +62,36 @@ func GenerateTrees() {
 	}
 }
 
+func GenerateParks() {
+	log.Println("Gathering Parks")
+	parks := AllNationalParks()
+
+	log.Println("Got Parks")
+
+	dirName := "static/data/parks"
+	os.MkdirAll(dirName, os.ModeDir|os.ModePerm)
+
+	// Write the tree index file
+	b, err := json.Marshal(parks)
+	if err != nil {
+		log.Println("error:", err)
+	}
+	err = ioutil.WriteFile(dirName+"/index.json", b, 0644)
+
+	for i := range parks {
+		log.Println("Writing", parks[i].UnitName)
+
+		b, err := json.Marshal(parks[i])
+		if err != nil {
+			log.Println("error:", err)
+		}
+
+		// Write the file
+		err = ioutil.WriteFile(fmt.Sprintf("%s/%s.json", dirName, parks[i].UnitCode), b, 0644)
+
+	}
+}
+
 func GenerateZipcodeTable(tableName string, distance uint) {
 	log.Println("Gathering Zipcodes")
 	zipcodes := AllZipcodes()
