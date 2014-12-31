@@ -53,20 +53,12 @@ angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate
                 controller:'ParksCtrl',
                 templateUrl:'../templates/parks/index.html'
             })
-            .when('/lakes/nearby', {
-                controller:'NearbyLakesCtrl',
-                templateUrl:'../templates/lakes/index.html'
-            })
             .when('/lakes', {
                 controller:'LakesCtrl',
                 templateUrl:'../templates/lakes/index.html'
             })
             .when('/rivers/nearby', {
                 controller:'NearbyRiversCtrl',
-                templateUrl:'../templates/rivers/index.html'
-            })
-            .when('/rivers', {
-                controller:'RiversCtrl',
                 templateUrl:'../templates/rivers/index.html'
             })
             .otherwise({
