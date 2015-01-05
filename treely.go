@@ -130,9 +130,10 @@ func main() {
 	switch os.Args[1] {
 	case "serve":
 		r := mux.NewRouter()
-		r.HandleFunc("/zipcodes/{zipcode}/{table}", zipcodeTableHandler).Methods("GET")
-		r.HandleFunc("/{table}/{resourceId}", showHandler).Methods("GET")
-		r.HandleFunc("/{table}", indexHandler).Methods("GET")
+		r.HandleFunc("/v1/zipcodes/{zipcode}/{table}", zipcodeTableHandler).Methods("GET")
+		r.HandleFunc("/v1/{table}/{resourceId}", showHandler).Methods("GET")
+		r.HandleFunc("/v1/{table}", indexHandler).Methods("GET")
+		r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 
 		http.Handle("/", r)
 		http.ListenAndServe(":3001", nil)
