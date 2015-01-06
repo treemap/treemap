@@ -15,11 +15,7 @@ angular.module('treemapApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimat
     .config(function($routeProvider) {
         $routeProvider
             .when('/', {
-                redirectTo: "/zipcode/94103"
-            })
-            .when('/zipcode/:zipcode', {
-                controller:'ShowZipcodeCtrl',
-                templateUrl:'../templates/zipcodes/show.html'
+                redirectTo: "/trees"
             })
             .when('/trees', {
                 controller:'TreesCtrl',
@@ -28,6 +24,10 @@ angular.module('treemapApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimat
             .when('/trees/:treeId', {
                 controller:'ShowTreeCtrl',
                 templateUrl:'../templates/trees/show.html'
+            })
+            .when('/zipcode/:zipcode', {
+                controller:'ShowZipcodeCtrl',
+                templateUrl:'../templates/zipcodes/show.html'
             })
             .when('/parks/nearby', {
                 controller:'NearbyParksCtrl',
