@@ -11,7 +11,7 @@ var AddGeoJsonsToMap = function(geoms, map) {
     }
 }
 
-angular.module('treelyApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate'])
+angular.module('treemapApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimate'])
     .config(function($routeProvider) {
         $routeProvider
             .when('/', {
