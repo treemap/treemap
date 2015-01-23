@@ -4,12 +4,14 @@
 
  - http://esp.cr.usgs.gov/data/little/
 
-
 * National Parks
 
  - https://catalog.data.gov/dataset/national-park-boundariesf0a4c
 
 * Hydrology
+
+ River Dataset:
+  - WBDHU6
 
  - http://viewer.nationalmap.gov/viewer/nhd.html?p=nhd
 
@@ -19,3 +21,7 @@
 * State Data
 
  - ftp://ftp2.census.gov/geo/tiger/TIGER2014/STATE
+
+* Coast Vulnerabilities
+
+ - http://pubs.usgs.gov/dds/dds68/htmldocs/data.htm

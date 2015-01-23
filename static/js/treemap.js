@@ -41,6 +41,10 @@ angular.module('treemapApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimat
                 controller:'LakesCtrl',
                 templateUrl:'../templates/lakes/index.html'
             })
+            .when('/sea_rises', {
+                controller:'SeaRisesCtrl',
+                templateUrl:'../templates/sea_rises/index.html'
+            })
             .when('/rivers/nearby', {
                 controller:'NearbyRiversCtrl',
                 templateUrl:'../templates/rivers/index.html'
@@ -146,6 +150,24 @@ angular.module('treemapApp', ['ngRoute', 'chieffancypants.loadingBar', 'ngAnimat
                     cfpLoadingBar.inc();
 
                     L.geoJson(JSON.parse($scope.parks[i].geom)).addTo(mapContainer);
+                }
+                cfpLoadingBar.complete()
+
+            }).
+            error(function(data, status, headers, config) {});
+    })
+    .controller('SeaRisesCtrl', function($scope, $http, $routeParams, cfpLoadingBar) {
+        $scope.sea_rises = {}
+
+        $http.get(SarpaServiceDiscovery.treemap[0] + '/v1/sea_rise').
+            success(function(data, status, headers, config) {
+                cfpLoadingBar.start();
+                $scope.sea_rises = data;
+
+                for(var i = 0; i < $scope.sea_rises.length; i++) {
+                    cfpLoadingBar.inc();
+
+                    L.geoJson(JSON.parse($scope.sea_rises[i].geom)).addTo(mapContainer);
                 }
                 cfpLoadingBar.complete()
 

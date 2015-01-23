@@ -102,6 +102,12 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	render.RenderJson(w, z)
 }
 
+func seaRiseTableHandler(w http.ResponseWriter, r *http.Request) {
+	z := AllSeaRise()
+
+	render.RenderJson(w, z)
+}
+
 func init() {
 	etcdHosts := os.Getenv("ETCD_HOSTS")
 	if etcdHosts == "" {
@@ -130,6 +136,7 @@ func main() {
 	switch os.Args[1] {
 	case "serve":
 		r := mux.NewRouter()
+		r.HandleFunc("/v1/sea_rise", seaRiseTableHandler).Methods("GET")
 		r.HandleFunc("/v1/zipcodes/{zipcode}/{table}", zipcodeTableHandler).Methods("GET")
 		r.HandleFunc("/v1/{table}/{resourceId}", showHandler).Methods("GET")
 		r.HandleFunc("/v1/{table}", indexHandler).Methods("GET")
