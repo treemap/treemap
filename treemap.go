@@ -103,7 +103,10 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func seaRiseTableHandler(w http.ResponseWriter, r *http.Request) {
-	z := AllSeaRise()
+
+	z := cache.Get("sea_rise", func() interface{} {
+		return AllSeaRise()
+	})
 
 	render.RenderJson(w, z)
 }
