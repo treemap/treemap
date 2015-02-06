@@ -1,0 +1,80 @@
+  <div class="pageheader">
+                <h1>Goole Maps</h1>
+                <div class="breadcrumb-wrapper hidden-xs">
+                    <span class="label">You are here:</span>
+                    <ol class="breadcrumb">
+                        <li><a href="index.html">Dashboard</a>
+                        </li>
+                        <li>Maps</li>
+                        <li class="active">Google Maps</li>
+                    </ol>
+                </div>
+            </div>
+            <section id="main-content" class="animated fadeInRight">
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Basic</h3>
+                                <div class="actions pull-right">
+                                    <i data-widget-toggle class="fa fa-chevron-down"></i>
+                                    <i data-widget-close class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <div class="panel-body" ng-controller="GoogleMaps">
+                               <div ui-map="myMap" ui-options="mapOptions" class="google-map"></div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Retro map</h3>
+                                <div class="actions pull-right">
+                                    <i data-widget-toggle class="fa fa-chevron-down"></i>
+                                    <i data-widget-close class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <div class="panel-body" ng-controller="GoogleMaps">
+                                 <div ui-map="myMap2" ui-options="mapOptions2" class="google-map"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Black & White</h3>
+                                <div class="actions pull-right">
+                                    <i data-widget-toggle class="fa fa-chevron-down"></i>
+                                    <i data-widget-close class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <div class="panel-body" ng-controller="GoogleMaps">
+                                 <div ui-map="myMap3" ui-options="mapOptions3" class="google-map"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Icy Blue</h3>
+                                <div class="actions pull-right">
+                                    <i data-widget-toggle class="fa fa-chevron-down"></i>
+                                    <i data-widget-close class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <div class="panel-body" ng-controller="GoogleMaps">
+                                <div ui-map="myMap4" ui-options="mapOptions4" class="google-map"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+   
+              </section>

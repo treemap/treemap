@@ -1,0 +1,74 @@
+<div class="pageheader">
+                <h1>Sparkline</h1>
+                <div class="breadcrumb-wrapper hidden-xs">
+                    <span class="label">You are here:</span>
+                    <ol class="breadcrumb">
+                        <li><a href="index.html">Dashboard</a>
+                        </li>
+                        <li>Charts</li>
+                        <li class="active">Sparkline</li>
+                    </ol>
+                </div>
+            </div>
+            <section id="main-content" class="animated fadeInUp" ng-controller="sparklineCtrl as sparkline">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Line</h3>
+                                <div class="actions pull-right">
+                                    <i data-widget-toggle class="fa fa-chevron-down"></i>
+                                    <i data-widget-close class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <div class="panel-body text-center">
+                                <div sparkline spark-data="sparkline.inlineData" spark-options="sparkline.inlineOptions"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Bar</h3>
+                                <div class="actions pull-right">
+                                    <i data-widget-toggle class="fa fa-chevron-down"></i>
+                                    <i data-widget-close class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <div class="panel-body text-center">
+                                <div sparkline spark-data="sparkline.barSmallData" spark-options="sparkline.barSmallOptions"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Pie</h3>
+                                <div class="actions pull-right">
+                                    <i data-widget-toggle class="fa fa-chevron-down"></i>
+                                    <i data-widget-close class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <div class="panel-body text-center">
+                                <div sparkline spark-data="sparkline.pieSmallData" spark-options="sparkline.pieSmallOptions"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Line</h3>
+                                <div class="actions pull-right">
+                                    <i data-widget-toggle class="fa fa-chevron-down"></i>
+                                    <i data-widget-close class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <div class="panel-body text-center">
+                                <div sparkline spark-data="sparkline.longLineData" spark-options="sparkline.longLineOptions"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>

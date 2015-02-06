@@ -1,0 +1,79 @@
+<div class="pageheader">
+    <h1>Form Mask </h1>
+    <div class="breadcrumb-wrapper hidden-xs">
+        <span class="label">You are here:</span>
+        <ol class="breadcrumb">
+            <li><a href="index.html">Dashboard</a>
+            </li>
+            <li>Forms</li>
+            <li class="active">Form Mask</li>
+        </ol>
+    </div>
+</div>
+<section id="main-content" class="animated fadeInRight">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Form Mask</h3>
+                    <div class="actions pull-right">
+                        <i data-widget-toggle class="fa fa-chevron-down"></i>
+                        <i data-widget-close class="fa fa-times"></i>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <form class="form-horizontal" action="">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Date</label>
+
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" data-mask="99/99/9999" placeholder="" ng-model="mask1">
+                                <span class="help-block">dd/mm/yyyy</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Phone</label>
+
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" data-mask="(999) 999-9999" placeholder="" ng-model="mask2">
+                                <span class="help-block">(999) 999-9999</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Phone + Ext</label>
+
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" data-mask="(999) 999-9999 x9999" placeholder="" ng-model="mask3">
+                                <span class="help-block">(999) 999-9999 x9999</span>
+                            </div>
+                        </div>
+                                <div class="form-group">
+                    <label class="col-sm-2 control-label">Tax ID</label>
+
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" data-mask="99-9999999" placeholder="" ng-model="mask4">
+                        <span class="help-block">99-9999999</span>
+                    </div>
+                </div>
+                        <div class="form-group">
+                    <label class="col-sm-2 control-label">SSN</label>
+
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" data-mask="999-99-9999" placeholder="" ng-model="mask4">
+                        <span class="help-block">999-99-9999</span>
+                    </div>
+                </div>
+                        <div class="form-group">
+                    <label class="col-sm-2 control-label">Product Key</label>
+
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" data-mask="?*-999-9999" placeholder="" ng-model="mask5">
+                        <span class="help-block">a*-999-9999</span>
+                    </div>
+                </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

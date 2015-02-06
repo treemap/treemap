@@ -1,0 +1,120 @@
+<div class="pageheader">
+    <h1></i>Alerts &amp; Notifications</h1>
+    <div class="breadcrumb-wrapper hidden-xs">
+        <span class="label">You are here:</span>
+        <ol class="breadcrumb">
+            <li><a href="index.html">Dashboard</a>
+            </li>
+            <li>UI Elements</li>
+            <li class="active">Alerts &amp; Notifications</li>
+        </ol>
+    </div>
+</div>
+<section id="main-content" class="animated fadeInRight">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default" ng-controller="AddDynamicNotificationsExampleCtrl">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Angular Growl Notifications</h3>
+                    <div class="actions pull-right">
+                        <i data-widget-toggle class="fa fa-chevron-down"></i>
+                        <i data-widget-close class="fa fa-times"></i>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <growl-notifications></growl-notifications>
+                    <!--
+                                    Loop over notifications using ng-repeat
+
+                                    Track by id so each message has unique id
+                                    and identical messages don't cause AngularJS
+                                    to throw errors about ng-repeat containing
+                                    identical errors.
+
+                                    Don't use ng-repeat on growl-notification element directly
+                                    but use a wrapping element instead.
+                                -->
+                    <div ng-repeat="(id, notification) in notifications track by id">
+                        <growl-notification>
+                            {{notification}}
+                        </growl-notification>
+                    </div>
+                    <!--
+        Show form to add new notifications
+
+        The Bootstrap CSS has been removed for clarity.
+    -->
+                    <div class="row">
+                        <form>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>New notification</label>
+                                    <input type="text" ng-model="newNotification" class="form-control" />
+                                    <span class="ng-cloak" ng-show="invalidNotification">Please enter a valid message</span>
+                                </div>
+                                <div class="form-group">
+                                    <button ng-click="add(newNotification)" class="btn btn-success">Add notification</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Simple Alerts</h3>
+                    <div class="actions pull-right">
+                        <i data-widget-toggle class="fa fa-chevron-down"></i>
+                        <i data-widget-close class="fa fa-times"></i>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="alert alert-success alert-dismissable">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        <strong>Well done!</strong>You successfully read this important alert message.</div>
+                    <div class="alert alert-info alert-dismissable">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        <strong>Heads up!</strong>This alert needs your attention, but it's not super important.</div>
+                    <div class="alert alert-warning alert-dismissable">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        <strong>Warning!</strong>Better check yourself, you're not looking too good.</div>
+                    <div class="alert alert-danger alert-dismissable">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        <strong>Oh snap!</strong>Change a few things up and try submitting again.</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Alert Messages</h3>
+                    <div class="actions pull-right">
+                        <i data-widget-toggle class="fa fa-chevron-down"></i>
+                        <i data-widget-close class="fa fa-times"></i>
+                    </div>
+                </div>
+                <div class="panel-body">
+
+                    <div class="alert alert-danger fade in">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        <h4>Oh snap! You got an error!</h4>
+                        <p>Change this and that and try again. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Cras mattis consectetur purus sit amet fermentum.</p>
+                        <p>
+                            <button type="button" class="btn btn-danger ">Take this action</button>
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+</section>

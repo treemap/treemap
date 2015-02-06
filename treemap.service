@@ -2,6 +2,7 @@
 Description=treemap
 
 [Service]
+User=core
 EnvironmentFile=/etc/environment
 ExecStartPre=-/usr/bin/docker pull abhiyerra/treemap
 ExecStartPre=-/usr/bin/docker kill treemap

@@ -1,31 +1,50 @@
 <!DOCTYPE html>
-<html ng-app="treemapApp" lang="en">
+<!-- Application Name - app.js and Main controller - controller.js-->
+<html ng-app="neuboard" ng-controller="MainCtrl as main">
+
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Page title - directive.js -->
+    <title page-title></title>
     <meta name="description" content="">
-    <meta name="author" content="">
-
-    <title>TreeMap by Forestly</title>
-
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/bower_components/angular-loading-bar/build/loading-bar.min.css"></link>
-    <link href="/css/application.css" rel="stylesheet">
-
-    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.3/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.3/angular-resource.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.3/angular-route.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.3/angular-animate.min.js"></script>
-
-    <script src="/js/bower_components/angular-loading-bar/build/loading-bar.min.js"></script>
-
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
-    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Sliders-->
+    <link rel="stylesheet" href="js/plugins/bootstrap-slider/css/slider.css">
+    <!-- Fonts  -->
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/simple-line-icons.css">
+    <!--  CSS Animations -->
+    <link href="css/animate.css" rel="stylesheet">
+    <!-- Switchery -->
+    <link rel="stylesheet" href="js/plugins/switchery/switchery.min.css">
+    <!-- C3 Chart -->
+    <link rel="stylesheet" href="js/plugins/c3Chart/css/c3-0.2.4.css">
+    <!-- Calendar demo -->
+    <link rel="stylesheet" href="css/clndr.css">
+    <!-- jvectormap-->
+    <link rel="stylesheet" href="js/plugins/jvectormap/css/jquery-jvectormap-2.0.1.css">
+    <!-- datatables-->
+    <link rel="stylesheet" href="js/plugins/dataTables/css/dataTables.css">
+    <!-- iCheck-->
+    <link rel="stylesheet" href="js/plugins/icheck/css/_all.css">
+    <!-- Drop Zone-->
+    <link rel="stylesheet" href="js/plugins/dropzone/css/dropzone.css">
+    <link rel="stylesheet" href="js/plugins/dropzone/css/basic.css">
+    <!--  CSS Main -->
+    <link href="css/main.css" rel="stylesheet">
+    <link href="css/treemap.css" rel="stylesheet">
+    <!-- Feature detection -->
+    <script src="js/vendor/modernizr-2.6.2.min.js"></script>
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="js/vendor/html5shiv.js"></script>
+      <script src="js/vendor/respond.min.js"></script>
+    <![endif]-->
 
     <script src="http://discovery.treemap.org/discovery.js"></script>
     <script>
@@ -34,39 +53,103 @@
      }
     </script>
   </head>
-  <body>
-    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-      <div class="container-fluid">
+  <!-- Current state name -->
 
-        <div class="navbar-header">
-          <a href="/" class="navbar-brand">TreeMap</a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li><a ng-href="/#/trees">Trees</a></li>
-            <li><a ng-href="/#/parks">Parks</a></li>
-          </ul>
-
-          <form class="navbar-form navbar-right" novalidate role="search">
-            <div class="form-group">
-              <input type="text" class="form-control" placeholder="Zip Code">
-            </div>
-            <button type="submit" class="btn btn-default">Search</button>
-          </form>
-        </div>
-      </div>
-    </nav>
-
-    <div class="container-fluid">
-      <div class="row placeholders">
+  <body class="{{$state.current.name}}">
+    <!-- Page Wrapper-->
+    <section id="main-wrapper" class="theme-default">
+      <!-- Page wrapper -->
+      <header id="header" ng-include="'templates/header.html'"></header>
+      <!-- Left Sidebar Navigation -->
+      <aside class="sidebar sidebar-left" ng-include="'templates/sidebar.html'"></aside>
+      <!-- Content wraper -->
+      <section class="main-content-wrapper">
         <div id="map-container"></div>
-      </div>
+        <!-- Main content view  -->
+        <div ui-view></div>
+        <!-- Footer -->
+        <div ng-include="'views/footer.html'"></div>
+      </section>
+      <!-- /Content wraper-->
+    </section>
+    <!-- /Page wrapper-->
+    <!--Config demo-->
+    <div id="config" class="config hidden-xs"  ng-include="'views/demo-settings.html'"></div>
+    <!-- jQuery -->
+    <script src="js/vendor/jquery-2.1.1.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="js/bootstrap/bootstrap.min.js"></script>
+    <script src="js/plugins/navgoco/jquery.navgoco.min.js"></script>
+    <!-- Morris charts -->
+    <script src="js/plugins/morris/raphael.js"></script>
+    <script src="js/plugins/morris/morris.js"></script>
+    <!-- chartJS  -->
+    <script src="js/plugins/chartjs/Chart.min.js"></script>
+    <!-- Angular -->
+    <script src="js/angular/angular.min.js"></script>
+    <script src="js/ui-router/angular-ui-router.min.js"></script>
+    <script src="js/bootstrap/ui-bootstrap-tpls-0.12.0.min.js"></script>
+    <script src="js/angular/angular-animate.min.js"></script>
+    <!-- uievents -->
+    <script src="js/plugins/ui-events/event.js"></script>
+    <!-- Growl -->
+    <script src="js/plugins/growl/angular-growl-notifications.min.js"></script>
+    <!-- Pace JS -->
+    <script src="js/plugins/pace/pace.min.js"></script>
+    <!-- Bootstrap sliders -->
+    <script src="js/plugins/bootstrap-slider/js/bootstrap-slider.js"></script>
+    <!-- C3 chart  -->
+    <script src="js/plugins/c3Chart/js/d3-3.4.11.min.js"></script>
+    <script src="js/plugins/c3Chart/js/c3-0.2.4.min.js"></script>
+    <!-- chartJS  -->
+    <script src="js/plugins/chartjs/tc-angular-chartjs.min.js"></script>
+    <!-- Sparkline charts -->
+    <script src="js/plugins/sparkline/jquery.sparkline.min.js"></script>
+    <!-- Gauge -->
+    <script src="js/plugins/gauge/gauge.min.js"></script>
+    <!-- UI Tree -->
+    <script src="js/plugins/ui-tree/angular-ui-tree.min.js"></script>
+    <!-- switchery -->
+    <script src="js/plugins/switchery/switchery.min.js"></script>
+    <script src="js/plugins/switchery/ui-switchery.js"></script>
+    <!-- Maps -->
+    <script src="http://maps.google.com/maps/api/js?sensor=true"></script>
+    <script src="js/plugins/ui-maps/ui-map.js"></script>
+    <script src="js/plugins/jvectormap/js/jquery-jvectormap-2.0.1.min.js"></script>
+    <script src="js/plugins/jvectormap/js/jquery-jvectormap-us-aea-en.js"></script>
+    <!-- datatables -->
+    <script src="js/plugins/dataTables/js/jquery.dataTables.js"></script>
+    <script src="js/plugins/dataTables/js/dataTables.bootstrap.js"></script>
+    <script src="js/plugins/dataTables/js/angular-datatables.min.js"></script>
+    <!-- iCheck -->
+    <script src="js/plugins/icheck/js/icheck.min.js"></script>
+    <!-- Weather  -->
+    <script src="js/plugins/weather/js/skycons.js"></script>
+    <!-- Calendar  -->
+    <script src="js/plugins/calendar/moment.js"></script>
+    <script src="js/plugins/calendar/clndr.js"></script>
+    <!-- Wizard  -->
+    <script src="js/plugins/wizard/bootstrap.wizard.js"></script>
+    <script src="js/plugins/wizard/wizard-demo.js"></script>
+    <!-- File Upload  -->
+    <script src="js/plugins/dropzone/js/dropzone.min.js"></script>
+    <!-- File Upload  -->
+    <script src="js/plugins/mask/js/jasny-bootstrap.min.js"></script>
+    <!-- wysiwyg editor  -->
+    <script src="js/plugins/editors/textAngular-sanitize.js"></script>
+    <script src="js/plugins/editors/textAngular.min.js"></script>
 
-      <div class="row">
-        <div class="main" ng-view></div>
-      </div>
-    </div>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
 
-    <script src="/js/treemap.js"></script>
+    <!-- Angular Script -->
+    <script src="js/app.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/directives.js"></script>
+    <script src="js/controllers.js"></script>
+    <script src="js/custom.js"></script>
+
+
   </body>
+
 </html>

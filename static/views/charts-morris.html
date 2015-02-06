@@ -1,0 +1,68 @@
+<div class="pageheader">
+    <h1>Morris</h1>
+    <div class="breadcrumb-wrapper hidden-xs">
+        <span class="label">You are here:</span>
+        <ol class="breadcrumb">
+            <li><a href="index.html">Dashboard</a>
+            </li>
+            <li>Charts</li>
+            <li class="active">Morris</li>
+        </ol>
+    </div>
+</div>
+<section id="main-content" class="animated fadeInRight">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Bar Chart</h3>
+                    <div class="actions pull-right">
+                        <i data-widget-toggle class="fa fa-chevron-down"></i>
+                        <i data-widget-close class="fa fa-times"></i>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div ng-controller="BarChartCtrl">
+                    <barchart id="bar-example" data-options="chart_options"></barchart>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Area as Line</h3>
+                    <div class="actions pull-right">
+                        <i data-widget-toggle  class="fa fa-chevron-down"></i>
+                        <i data-widget-close class="fa fa-times"></i>
+                    </div>
+                </div>
+                <div class="panel-body">
+                     <div ng-controller="LineChartCtrl">
+    <linechart id="line-example" data-options="chart_options"></linechart>
+</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Donut Chart</h3>
+                    <div class="actions pull-right">
+                        <i data-widget-toggle  class="fa fa-chevron-down"></i>
+                        <i data-widget-close class="fa fa-times"></i>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div ng-controller="DonutChartCtrl">
+                        <donutchart id="donut-example" data-options="chart_options"></donutchart>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
