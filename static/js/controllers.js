@@ -1300,18 +1300,17 @@ angular
                 error(function(data, status, headers, config) {});
         });
     })
-    .controller('ShowTreeCtrl', function($scope, $http, $routeParams) {
+    .controller('ShowTreeCtrl', function($scope, $http, $stateParams) {
         $scope.tree = {}
 
-        alert('Hi');
         $http.get('/data/trees/' + $stateParams.treeId + '.json').
             success(function(data, status, headers, config) {
                 $scope.tree = data;
 
-//                AddGeoJsonsToMap($scope.tree.geom, mapContainer);
+                AddGeoJsonsToMap($scope.tree.geom, mapContainer);
 
-                var center = JSON.parse($scope.tree.center);
-                mapContainer.setView(center.coordinates.reverse(), 6);
+                // var center = JSON.parse($scope.tree.center);
+                // mapContainer.setView(center.coordinates.reverse(), 6);
             }).
             error(function(data, status, headers, config) {});
     })
