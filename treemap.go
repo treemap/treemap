@@ -82,6 +82,9 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 
 	z := cache.Get(table, func() interface{} {
 		switch table {
+		case "zipcodes":
+			zipcodes := AllZipcodes()
+			return zipcodes
 		case "lakes":
 			var hydrology []Hydrology
 			db.Table("lakes").Select("ST_AsGeoJSON(ST_CollectionExtract(geom, 3)) as geom_data, name").Scan(&hydrology)
@@ -154,8 +157,6 @@ func main() {
 		}
 
 		switch os.Args[2] {
-		case "zipcodes":
-			GenerateZipcodes()
 		case "trees":
 			GenerateTrees()
 		case "parks":

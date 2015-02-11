@@ -8,28 +8,6 @@ import (
 	"os"
 )
 
-func GenerateZipcodes() {
-	log.Println("Gathering Zipcodes")
-	zipcodes := AllZipcodes()
-
-	log.Println("Got Zipcodes")
-	for i := range zipcodes {
-		log.Println("Writing", zipcodes[i].Number)
-		zipcodes[i].GetInfo()
-
-		os.MkdirAll("static/data/zipcodes", os.ModeDir|os.ModePerm)
-
-		b, err := json.Marshal(zipcodes[i])
-		if err != nil {
-			log.Println("error:", err)
-		}
-
-		// Write the file
-		err = ioutil.WriteFile("static/data/zipcodes/"+zipcodes[i].Number+".json", b, 0644)
-
-	}
-}
-
 func GenerateTrees() {
 	log.Println("Gathering Trees")
 	trees := AllTrees()
